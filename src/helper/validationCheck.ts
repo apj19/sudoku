@@ -17,3 +17,17 @@ export default function connectedCells(row: number, col: number) {
 
   return cellsArr;
 }
+
+export function sameCells(gameBoard: number[][], cellValue: number) {
+  const cellsArr: string[] = [];
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (gameBoard[i][j] == cellValue && gameBoard[i][j] != 0) {
+        cellsArr.push(`${i}${j}`);
+      }
+    }
+  }
+
+  return cellsArr;
+}

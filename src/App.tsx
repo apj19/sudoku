@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 import "./App.css";
 
-import connectedCells from "./helper/validationCheck";
+import connectedCells, { sameCells } from "./helper/validationCheck";
 import converttoBoardArray from "./helper/stringtoBoard";
-import axios from "axios";
+// import axios from "axios";
 import { tempDb } from "./helper/tempDb";
 
 function App() {
@@ -23,17 +23,18 @@ function App() {
   const [mainBoard, setMainBoard] = useState<number[][]>(tempBoard);
   const [focusedCell, setFocusedCell] = useState<Set<string>>(new Set());
   const [checkCellValue, setCheckCellValuel] = useState<Set<string>>(new Set());
+  const [sameCellValue, setSameCellValue] = useState<Set<string>>(new Set());
 
   function handleChange(
     row: number,
     col: number,
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) {
     let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
 
     let currentinputValue: string = event.currentTarget.value.replace(
       /[^0-9]/g,
-      "",
+      ""
     );
     if (currentinputValue.length > 1) {
       currentinputValue = currentinputValue.slice(-1);
@@ -45,6 +46,7 @@ function App() {
       newSet.add(`${row}${col}`);
     }
     setCheckCellValuel(newSet);
+    setSameCellValue(new Set(sameCells(mainBoard, Number(currentinputValue))));
 
     setMainBoard(newarray);
   }
@@ -55,6 +57,9 @@ function App() {
     // newSet.add(`${row}${col}`);
     // newSet.add("00");
     setFocusedCell(newSet);
+    setSameCellValue(
+      new Set(sameCells(mainBoard, Number(mainBoard[row][col])))
+    );
   }
 
   async function fetchRandomBoard() {
@@ -110,7 +115,9 @@ function App() {
                          ? "text-red-500"
                          : "text-black"
                      }
-                     ${focusedCell.has(`${idx}${cdx}`) ? "bg-blue-100" : ""}`}
+                     ${focusedCell.has(`${idx}${cdx}`) ? "bg-blue-100" : ""}
+                     ${sameCellValue.has(`${idx}${cdx}`) ? "bg-blue-300" : ""}
+                     `}
                   type="text"
                   value={col == 0 ? "" : col}
                   onChange={(event) => handleChange(idx, cdx, event)}
