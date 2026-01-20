@@ -7,13 +7,23 @@ import converttoBoardArray from "./helper/stringtoBoard";
 // import axios from "axios";
 import { tempDb } from "./helper/tempDb";
 import solveSudoku from "./helper/solver";
+type log = {
+  event: "TRY" | "PLACE" | "BACKTRACK";
+  coordinate: number[];
+  value: number;
+};
+type logState = {
+  event: "TRY" | "PLACE" | "BACKTRACK";
+  coordinate: string;
+};
+
+const solvingStyle = {
+  TRY: "bg-yellow-100",
+  PLACE: "bg-green-100",
+  BACKTRACK: "bg-red-100",
+};
 
 function App() {
-  type log = {
-    event: "TRY" | "PLACE" | "BACKTRACK";
-    coordinate: number[];
-    value: number;
-  };
   let tempBoard: number[][] = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -34,6 +44,7 @@ function App() {
   //texting counster
   const [counter, setCounter] = useState(100);
   const solvedEvents = useRef<log[]>([]);
+  const [tryValue, setTryValue] = useState<logState>();
 
   function handleChange(
     row: number,
@@ -107,17 +118,19 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (counter < 10) {
+    if (counter < 100) {
       const timer = setInterval(() => {
         let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
         let currntEvent: log = solvedEvents.current[counter];
         let row: number = currntEvent.coordinate[0];
         let col: number = currntEvent.coordinate[1];
         newarray[row][col] = currntEvent.value;
+
         // console.log(newarray);
         setMainBoard(newarray);
+        setTryValue({ event: currntEvent.event, coordinate: `${row}${col}` });
         setCounter(counter + 1);
-      }, 1000);
+      }, 500);
 
       return () => clearInterval(timer);
     }
@@ -154,6 +167,12 @@ function App() {
                      }
                      ${focusedCell.has(`${idx}${cdx}`) ? "bg-blue-100" : ""}
                      ${sameCellValue.has(`${idx}${cdx}`) ? "bg-blue-300" : ""}
+                     ${
+                       tryValue?.coordinate == `${idx}${cdx}`
+                         ? solvingStyle[tryValue.event]
+                         : ""
+                     }
+
                      `}
                   type="text"
                   value={col == 0 ? "" : col}
