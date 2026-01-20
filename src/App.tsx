@@ -18,9 +18,9 @@ type logState = {
 };
 
 const solvingStyle = {
-  TRY: "bg-yellow-100",
-  PLACE: "bg-green-100",
-  BACKTRACK: "bg-red-100",
+  TRY: "bg-yellow-200",
+  PLACE: "bg-green-200",
+  BACKTRACK: "bg-red-200",
 };
 
 function App() {
@@ -130,7 +130,7 @@ function App() {
         setMainBoard(newarray);
         setTryValue({ event: currntEvent.event, coordinate: `${row}${col}` });
         setCounter(counter + 1);
-      }, 500);
+      }, 200);
 
       return () => clearInterval(timer);
     }
@@ -190,7 +190,7 @@ function App() {
           className="text-white mt-10 bg-blue-400 box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-full text-sm px-4 py-2.5 focus:outline-none"
           onClick={handleSolver}
         >
-          New Game
+          Solve It!
         </button>
         <div>counster-{counter}</div>
       </div>
