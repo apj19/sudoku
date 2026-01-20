@@ -6,8 +6,14 @@ import connectedCells, { sameCells } from "./helper/validationCheck";
 import converttoBoardArray from "./helper/stringtoBoard";
 // import axios from "axios";
 import { tempDb } from "./helper/tempDb";
+import solveSudoku from "./helper/solver";
 
 function App() {
+  type log = {
+    event: "TRY" | "PLACE" | "BACKTRACK";
+    coordinate: number[];
+    value: number;
+  };
   let tempBoard: number[][] = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -25,11 +31,16 @@ function App() {
   const [checkCellValue, setCheckCellValuel] = useState<Set<string>>(new Set());
   const [sameCellValue, setSameCellValue] = useState<Set<string>>(new Set());
 
+  //texting counster
+  const [counter, setCounter] = useState(100);
+  const solvedEvents = useRef<log[]>([]);
+
   function handleChange(
     row: number,
     col: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) {
+    console.log("changeEvent triggred");
     let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
 
     let currentinputValue: string = event.currentTarget.value.replace(
@@ -51,7 +62,8 @@ function App() {
     setMainBoard(newarray);
   }
 
-  function handleFocus(row: number, col: number) {
+  function hanleClick(row: number, col: number) {
+    console.log("click triggred");
     const connecteCellsList: string[] = connectedCells(row, col);
     const newSet = new Set<string>(connecteCellsList);
     // newSet.add(`${row}${col}`);
@@ -82,9 +94,34 @@ function App() {
     setMainBoard(extractPuzzle);
   }
 
+  function handleSolver() {
+    let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
+    const events: log[] = solveSudoku(newarray, []);
+    solvedEvents.current = events;
+    // console.log(events);
+    setCounter(0);
+  }
+
   useEffect(() => {
     fetchRandomBoard();
   }, []);
+
+  useEffect(() => {
+    if (counter < 10) {
+      const timer = setInterval(() => {
+        let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
+        let currntEvent: log = solvedEvents.current[counter];
+        let row: number = currntEvent.coordinate[0];
+        let col: number = currntEvent.coordinate[1];
+        newarray[row][col] = currntEvent.value;
+        // console.log(newarray);
+        setMainBoard(newarray);
+        setCounter(counter + 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [counter]);
 
   return (
     <>
@@ -121,7 +158,7 @@ function App() {
                   type="text"
                   value={col == 0 ? "" : col}
                   onChange={(event) => handleChange(idx, cdx, event)}
-                  onClick={() => handleFocus(idx, cdx)}
+                  onClick={() => hanleClick(idx, cdx)}
                 />{" "}
               </div>
             ))}
@@ -132,9 +169,11 @@ function App() {
         <button
           type="button"
           className="text-white mt-10 bg-blue-400 box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-full text-sm px-4 py-2.5 focus:outline-none"
+          onClick={handleSolver}
         >
           New Game
         </button>
+        <div>counster-{counter}</div>
       </div>
     </>
   );
