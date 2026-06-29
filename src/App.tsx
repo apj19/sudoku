@@ -49,14 +49,14 @@ function App() {
   function handleChange(
     row: number,
     col: number,
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) {
     console.log("changeEvent triggred");
     let newarray: number[][] = mainBoard.map((rows) => rows.map((e) => e));
 
     let currentinputValue: string = event.currentTarget.value.replace(
       /[^0-9]/g,
-      ""
+      "",
     );
     if (currentinputValue.length > 1) {
       currentinputValue = currentinputValue.slice(-1);
@@ -81,7 +81,7 @@ function App() {
     // newSet.add("00");
     setFocusedCell(newSet);
     setSameCellValue(
-      new Set(sameCells(mainBoard, Number(mainBoard[row][col])))
+      new Set(sameCells(mainBoard, Number(mainBoard[row][col]))),
     );
   }
 
@@ -130,7 +130,7 @@ function App() {
         setMainBoard(newarray);
         setTryValue({ event: currntEvent.event, coordinate: `${row}${col}` });
         setCounter(counter + 1);
-      }, 200);
+      }, 100);
 
       return () => clearInterval(timer);
     }
