@@ -1,11 +1,9 @@
-import { useEffect } from "react";
 import Controls from "./Controls";
 import GameBoard from "./GameBoard";
 import GameState from "./GameState";
 import GameType from "./GameType";
 import NumberPad from "./NumberPad";
 import "./gamePlay.css";
-import { useGameStore } from "@/store/store";
 
 export default function GamePlay() {
   return (

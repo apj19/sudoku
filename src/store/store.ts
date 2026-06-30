@@ -1,3 +1,4 @@
+import connectedCells, { sameCells } from "@/helper/validationCheck";
 import { create, type StateCreator } from "zustand";
 
 //get value    const mainBoard = useGameStore((state) => state.gameBoard);
@@ -8,16 +9,24 @@ interface GameBoardSlice {
 }
 
 interface SelectCellSlice {
-  selectedCell: number[];
+  selectedCell:  [number, number] | null;
   setSelectedCell: (x: number, y: number) => void;
 }
 
 interface HighliteSameCellSlice {
   HighliteSameCell: Set<string>;
-  updateHighliteSameCell: (updatedCells: Set<string>) => void;
+  updateHighliteSameCell: (cellValue: number) => void;
 }
 
-type gameStore = GameBoardSlice & SelectCellSlice & HighliteSameCellSlice;
+interface connectCellSlice {
+  connectCell: Set<string>;
+  updateConnectCell: (x: number, y: number) => void;
+}
+
+type gameStore = GameBoardSlice &
+  SelectCellSlice &
+  HighliteSameCellSlice &
+  connectCellSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -37,17 +46,28 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set) => ({
 });
 
 const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
-  selectedCell: [10, 10],
+  selectedCell: null,
   setSelectedCell: (x: number, y: number) =>
-    set(() => ({ selectedCell: [x, y] })),
+    set(() => ({ selectedCell: [x, y] as [number, number] })),
 });
 
 const createHighliteSameCellSlice: AppSliceCreator<HighliteSameCellSlice> = (
   set,
 ) => ({
   HighliteSameCell: new Set(),
-  updateHighliteSameCell: (updatedCells: Set<string>) =>
-    set(() => ({ HighliteSameCell: updatedCells })),
+  updateHighliteSameCell: (cellValue) =>
+    set((state) => ({
+      HighliteSameCell:
+        cellValue == 0
+          ? new Set()
+          : new Set(sameCells(state.gameBoard, cellValue)),
+    })),
+});
+
+const createConnectCellSlice: AppSliceCreator<connectCellSlice> = (set) => ({
+  connectCell: new Set(),
+  updateConnectCell: (x: number, y: number) =>
+    set(() => ({ connectCell: new Set<string>(connectedCells(x, y)) })),
 });
 
 //here we combine slice
@@ -55,4 +75,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createGameBoardSlice(...a),
   ...createSelectCellSlice(...a),
   ...createHighliteSameCellSlice(...a),
+  ...createConnectCellSlice(...a),
 }));
+
+// updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));
