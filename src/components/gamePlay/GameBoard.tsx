@@ -1,19 +1,22 @@
 import { useEffect } from "react";
 import Cell from "./Cell";
 import { useGameStore } from "@/store/store";
-import { sameCells } from "@/helper/validationCheck";
 
 export default function GameBoard() {
   const mainBoard = useGameStore((state) => state.gameBoard);
   const currentSelectedCell = useGameStore((state) => state.selectedCell);
   const highlitedCells = useGameStore((state) => state.HighliteSameCell);
   const connectedCell = useGameStore((state) => state.connectCell);
-
   const setUpdatedBoard = useGameStore((state) => state.setGameBoard);
   const setSelectedCell = useGameStore((state) => state.setSelectedCell);
   const updateHighliteCells = useGameStore(
     (state) => state.updateHighliteSameCell,
   );
+
+  const isSolving = useGameStore((state) => state.isSolving);
+  const SolverSpeed = useGameStore((state) => state.speed);
+  const nextSolvingStep = useGameStore((state) => state.nextEvent);
+  const tryingCell = useGameStore((state) => state.currentActiveCell);
 
   //this use effect handles windows keyboard events
 
@@ -27,7 +30,6 @@ export default function GameBoard() {
         rows.map((e) => e),
       );
 
-      
       //   console.log(e);
 
       if (e.key >= "1" && e.key <= "9") {
@@ -57,6 +59,17 @@ export default function GameBoard() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [currentSelectedCell]);
 
+  useEffect(() => {
+    // console.log("issloving use effect", isSolving);
+    if (!isSolving) return;
+
+    const interval = setInterval(() => {
+      nextSolvingStep();
+    }, SolverSpeed);
+
+    return () => clearInterval(interval);
+  }, [isSolving, SolverSpeed]);
+
   return (
     <>
       <div className="  [&>*:nth-child(1)]:border-t-2  [&>*:nth-child(3n)]:border-b-2 text-black">
@@ -77,10 +90,15 @@ export default function GameBoard() {
                   yCoordinate={cdx}
                   currentSelectedCell={
                     currentSelectedCell?.[0] == idx &&
-                    currentSelectedCell?.[1] == cdx 
+                    currentSelectedCell?.[1] == cdx
                   }
                   highlitedCells={highlitedCells.has(`${idx}${cdx}`)}
                   connectedCell={connectedCell.has(`${idx}${cdx}`)}
+                  currentTryingCell={
+                    tryingCell?.coordinate[0] == idx &&
+                    tryingCell?.coordinate[1] == cdx
+                  }
+                  currentTryingEvent={tryingCell?.event || "TRY"}
                 />
               </div>
             ))}

@@ -1,4 +1,3 @@
-
 import { useGameStore } from "@/store/store";
 
 interface CellProps {
@@ -8,6 +7,8 @@ interface CellProps {
   currentSelectedCell: boolean;
   highlitedCells: boolean;
   connectedCell: boolean;
+  currentTryingCell: boolean;
+  currentTryingEvent: "TRY" | "PLACE" | "BACKTRACK";
 }
 
 import { memo } from "react";
@@ -19,7 +20,14 @@ function Cell({
   currentSelectedCell,
   highlitedCells,
   connectedCell,
+  currentTryingCell,
+  currentTryingEvent,
 }: CellProps) {
+  const solvingStyle = {
+    TRY: "bg-yellow-200",
+    PLACE: "bg-green-200",
+    BACKTRACK: "bg-red-200",
+  };
   //subscribed to action will not cause re render
   const setSelectedCell = useGameStore((state) => state.setSelectedCell);
   const updatedConnectCells = useGameStore((state) => state.updateConnectCell);
@@ -35,7 +43,7 @@ function Cell({
     updateHighliteCells(cellValue);
   }
 
-  console.log(xCoordinate, yCoordinate);
+  // console.log(xCoordinate, yCoordinate);
 
   return (
     <>
@@ -46,6 +54,7 @@ function Cell({
                          
                     ${highlitedCells ? "bg-blue-200" : ""} 
                     ${connectedCell ? "bg-blue-100" : ""} 
+                    ${currentTryingCell ? solvingStyle[currentTryingEvent] : ""}
                          
                          
                          flex justify-center items-center`}
