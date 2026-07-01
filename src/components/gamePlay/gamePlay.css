@@ -1,6 +1,6 @@
 .game-layout {
   display: grid;
-  gap: 2rem;
+  gap: 10px;
   grid-template-columns: 1fr;
   grid-template-areas: "gameType" "gameState" "gameBoard" "controls" "numberPad";
   justify-content: center;
@@ -15,7 +15,6 @@
       "gameBoard  controls"
       "gameBoard  numberPad"
       "gameBoard  gameType";
-    width: 80%;
     place-items: center;
   }
 }

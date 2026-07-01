@@ -30,7 +30,7 @@ body {
 @custom-variant dark (&:is(.dark *));
 
 /* body {
-  @apply flex;
+  @apply min-w-75;
 } */
 
 @theme inline {
@@ -153,6 +153,6 @@ body {
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply font-sans md:mx-48;
   }
 }

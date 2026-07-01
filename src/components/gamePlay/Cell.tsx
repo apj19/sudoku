@@ -46,10 +46,11 @@ function Cell({
   // console.log(xCoordinate, yCoordinate);
 
   return (
+    //
     <>
       <div
         onClick={handleCellClick}
-        className={`h-7 w-7 md:w-12 md:h-12   border border-gray-200 text-center cursor-pointer caret-transparent  
+        className={`w-full h-full aspect-square border border-gray-300 text-center cursor-pointer caret-transparent  
                      ${currentSelectedCell ? "bg-blue-200" : ""} 
                          
                     ${highlitedCells ? "bg-blue-200" : ""} 

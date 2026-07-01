@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Header() {
   return (
     <>
-      <section className="flex items-center justify-between  min-h-20 sm:min-h-24 md:min-h-28 text-3xl sm:text-4xl md:text-5xl font-semibold px-4 text-center">
+      <section className="flex items-center justify-between  min-h-18 sm:min-h-24 md:min-h-28 text-3xl sm:text-4xl md:text-5xl font-semibold px-4 text-center">
         <Link to="/" className="text-foreground">
           Sudoku
         </Link>

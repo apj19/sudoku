@@ -8,14 +8,17 @@ import "./gamePlay.css";
 export default function GamePlay() {
   return (
     <>
-      <section className="game-layout  m-4 p-2">
+      <section className="game-layout  p-4 ">
         <div style={{ gridArea: "gameType" }}>
           <GameType />
         </div>
         <div style={{ gridArea: "gameState" }}>
           <GameState />
         </div>
-        <div style={{ gridArea: "gameBoard" }} className=" ">
+        <div
+          style={{ gridArea: "gameBoard" }}
+          className="md:w-[50%] border border-amber-200"
+        >
           <GameBoard />
         </div>
         <div style={{ gridArea: "controls" }}>

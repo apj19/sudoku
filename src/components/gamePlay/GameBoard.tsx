@@ -71,18 +71,15 @@ export default function GameBoard() {
   }, [isSolving, SolverSpeed]);
 
   return (
+    //  className="  [&>*:nth-child(1)]:border-t-2  [&>*:nth-child(3n)]:border-b-2"
+    // className="flex [&>*:nth-child(3n)]:border-r-2   [&>*:nth-child(1)]:border-l-2
     <>
-      <div className="  [&>*:nth-child(1)]:border-t-2  [&>*:nth-child(3n)]:border-b-2 text-black">
+      <div className=" grid grid-rows-9 gap-0  ">
         {mainBoard.map((row, idx) => (
-          <div
-            key={idx}
-            className="flex [&>*:nth-child(3n)]:border-r-2   [&>*:nth-child(1)]:border-l-2
-      
-      "
-          >
+          <div className="grid grid-cols-9 gap-0" key={idx}>
             {" "}
             {row.map((col, cdx) => (
-              <div key={cdx}>
+              <div key={cdx} className="">
                 {" "}
                 <Cell
                   cellValue={col}
