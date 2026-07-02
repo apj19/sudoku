@@ -6,7 +6,10 @@ import { create, type StateCreator } from "zustand";
 
 interface GameBoardSlice {
   gameBoard: number[][];
+  initialBoard: number[][];
   setGameBoard: (newBoard: number[][]) => void;
+  updateGameBoardWithCoordinate: (x: number, y: number, value: number) => void;
+  setInitialBoard: (newBoard: number[][]) => void;
 }
 
 interface SelectCellSlice {
@@ -52,19 +55,25 @@ type gameStore = GameBoardSlice &
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
-const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set) => ({
-  gameBoard: [
-    [0, 4, 2, 1, 5, 7, 0, 3, 8],
-    [9, 3, 1, 2, 8, 6, 5, 7, 4],
-    [7, 8, 5, 3, 9, 4, 1, 6, 2],
-    [1, 6, 8, 5, 2, 3, 7, 4, 9],
-    [3, 5, 4, 7, 0, 9, 8, 2, 6],
-    [2, 7, 9, 6, 4, 8, 3, 1, 5],
-    [8, 2, 3, 4, 7, 5, 6, 9, 1],
-    [4, 9, 6, 8, 3, 1, 2, 5, 7],
-    [5, 1, 7, 9, 6, 2, 4, 0, 0],
-  ],
+const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
+  gameBoard: [],
+  initialBoard: [],
+  setInitialBoard: (newBoard: number[][]) =>
+    set(() => ({ initialBoard: newBoard })),
   setGameBoard: (newBoard: number[][]) => set(() => ({ gameBoard: newBoard })),
+  updateGameBoardWithCoordinate: (x: number, y: number, value: number) => {
+    const { gameBoard, updateHighliteSameCell } = get();
+    const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
+    if (updatedBoard[x][y] == value) {
+      updatedBoard[x][y] = 0;
+      updateHighliteSameCell(0);
+    } else {
+      updatedBoard[x][y] = value;
+      updateHighliteSameCell(value);
+    }
+
+    set({ gameBoard: updatedBoard });
+  },
 });
 
 const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({

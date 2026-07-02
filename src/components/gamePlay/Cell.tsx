@@ -9,6 +9,7 @@ interface CellProps {
   connectedCell: boolean;
   currentTryingCell: boolean;
   currentTryingEvent: "TRY" | "PLACE" | "BACKTRACK";
+  isDefaultValue: boolean;
 }
 
 import { memo } from "react";
@@ -22,6 +23,7 @@ function Cell({
   connectedCell,
   currentTryingCell,
   currentTryingEvent,
+  isDefaultValue,
 }: CellProps) {
   const solvingStyle = {
     TRY: "bg-yellow-200",
@@ -50,12 +52,15 @@ function Cell({
     <>
       <div
         onClick={handleCellClick}
-        className={`w-full h-full aspect-square border border-gray-300 text-center cursor-pointer caret-transparent  
+        className={` border border-gray-300 text-center cursor-pointer caret-transparent  
                      ${currentSelectedCell ? "bg-blue-200" : ""} 
+                     ${yCoordinate === 2 || yCoordinate === 5 ? "border-r-2 border-r-foreground/50" : ""}
+                     ${xCoordinate === 2 || xCoordinate === 5 ? "border-b-2 border-b-foreground/50" : ""}
                          
                     ${highlitedCells ? "bg-blue-200" : ""} 
                     ${connectedCell ? "bg-blue-100" : ""} 
                     ${currentTryingCell ? solvingStyle[currentTryingEvent] : ""}
+                    ${isDefaultValue ? "" : "text-[#7091D5] font-bold"}
                          
                          
                          flex justify-center items-center`}

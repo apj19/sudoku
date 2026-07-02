@@ -37,20 +37,36 @@ export default function Controls() {
         Button
       </Button> */}
 
-      <div className="flex items-center justify-between  min-h-12 px-8    border border-amber-100 w-full">
-        <Button variant="outline" size="lg">
+      <div className="flex items-center justify-between  min-h-12     w-full">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+        >
           <RotateCcw />
         </Button>
-        <Button variant="outline" size="lg">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+        >
           <Eraser />
         </Button>
-        <Button variant="outline" size="lg">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+        >
           <Pen />
         </Button>
         {/* <Button variant="outline" size="lg">
           <PenOff />
         </Button> */}
-        <Button variant="outline" size="lg">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+        >
           <Lightbulb />
         </Button>
       </div>
