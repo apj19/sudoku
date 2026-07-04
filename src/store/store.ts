@@ -7,6 +7,8 @@ import { create, type StateCreator } from "zustand";
 interface GameBoardSlice {
   gameBoard: number[][];
   initialBoard: number[][];
+  solution:number[][]
+  setSolution:(solution:number[][])=>void
   setGameBoard: (newBoard: number[][]) => void;
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => void;
   setInitialBoard: (newBoard: number[][]) => void;
@@ -48,9 +50,23 @@ interface solverSlice {
   nextEvent: () => void;
 }
 
+interface mistakeSlice {
+  mistakeCount: number;
+  updateMistakeCount: () => void;
+  maxMistakeCount: number;
+  resetMistakeCount:()=>void
+}
+
 interface gameDifficultySlice {
   difficulty: "easy" | "medium" | "hard";
   setDifficulty: (getDifficulty: "easy" | "medium" | "hard") => void;
+  gameId: number; //this for when game changes it should trigger re render
+  incrementGameId:()=>void
+}
+
+interface isWrongCellValueSlice {
+  isWrongCellValue: [number, number] | null;
+  updateIsWrongCellValue: (x: number, y: number) => void;
 }
 
 type gameStore = GameBoardSlice &
@@ -58,18 +74,21 @@ type gameStore = GameBoardSlice &
   HighliteSameCellSlice &
   connectCellSlice &
   solverSlice &
-  gameDifficultySlice;
+  gameDifficultySlice & isWrongCellValueSlice & mistakeSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
 const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   gameBoard: [],
   initialBoard: [],
+  solution: [],
+  setSolution: (solution: number[][]) =>
+    set(() => ({ solution: solution })),
   setInitialBoard: (newBoard: number[][]) =>
     set(() => ({ initialBoard: newBoard })),
   setGameBoard: (newBoard: number[][]) => set(() => ({ gameBoard: newBoard })),
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => {
-    const { gameBoard, updateHighliteSameCell } = get();
+    const { gameBoard, updateHighliteSameCell,solution } = get();
     const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
     if (updatedBoard[x][y] == value) {
       updatedBoard[x][y] = 0;
@@ -79,13 +98,21 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       updateHighliteSameCell(value);
     }
 
-    set({ gameBoard: updatedBoard });
+    if(solution[x][y]!==value){
+      set((state)=>({ gameBoard: updatedBoard,isWrongCellValue: [x, y] as [number, number],mistakeCount:state.mistakeCount+1 }));
+    }else{
+      set({ gameBoard: updatedBoard,isWrongCellValue: null });
+    }
+
+    
+
+    
   },
 
   startNewGame: (newGame: number[][]) => {
-    const { setInitialBoard, setGameBoard } = get();
+    const {  setGameBoard } = get();
 
-    setInitialBoard(newGame); //this will save initial state of board
+    // setInitialBoard(newGame); //this will save initial state of board
     //set main game board
     setGameBoard(newGame);
     //default select cell state
@@ -94,8 +121,17 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       selectedCell: null,
       HighliteSameCell: new Set(),
       connectCell: new Set(),
+      isWrongCellValue:null
     });
   },
+});
+
+const createIsWrongCellValueSlice: AppSliceCreator<isWrongCellValueSlice> = (set) => ({
+  isWrongCellValue: null,
+  updateIsWrongCellValue: (x: number, y: number) =>
+
+    set({ isWrongCellValue: [x, y] as [number, number] }),
+
 });
 
 const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
@@ -109,6 +145,8 @@ const gameDifficultySlice: AppSliceCreator<gameDifficultySlice> = (set) => ({
   setDifficulty: (getDifficulty) => {
     set(() => ({ difficulty: getDifficulty }));
   },
+  gameId:0,
+  incrementGameId:()=>set((state)=>({gameId:state.gameId+1}))
 });
 
 const createHighliteSameCellSlice: AppSliceCreator<HighliteSameCellSlice> = (
@@ -188,6 +226,17 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
   },
 });
 
+const createMistakeSlice:AppSliceCreator<mistakeSlice> = (set)=>({
+  mistakeCount:0,
+  maxMistakeCount:3,
+  updateMistakeCount:()=>{
+    set((state)=>({mistakeCount:state.mistakeCount+1}))
+  },
+  resetMistakeCount:()=>{
+    set(()=>({mistakeCount:0}))
+  }
+})
+
 //here we combine slice
 export const useGameStore = create<gameStore>()((...a) => ({
   ...createGameBoardSlice(...a),
@@ -196,6 +245,8 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createConnectCellSlice(...a),
   ...createSolverSlice(...a),
   ...gameDifficultySlice(...a),
+  ...createIsWrongCellValueSlice(...a),
+  ...createMistakeSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));

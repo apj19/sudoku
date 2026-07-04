@@ -10,6 +10,7 @@ interface CellProps {
   currentTryingCell: boolean;
   currentTryingEvent: "TRY" | "PLACE" | "BACKTRACK";
   isDefaultValue: boolean;
+  isWrongCellValue:boolean
 }
 
 import { memo } from "react";
@@ -24,6 +25,7 @@ function Cell({
   currentTryingCell,
   currentTryingEvent,
   isDefaultValue,
+  isWrongCellValue,
 }: CellProps) {
   const solvingStyle = {
     TRY: "bg-yellow-200",
@@ -61,6 +63,7 @@ function Cell({
                     ${connectedCell ? "bg-blue-100" : ""} 
                     ${currentTryingCell ? solvingStyle[currentTryingEvent] : ""}
                     ${isDefaultValue ? "" : "text-[#7091D5] font-bold"}
+                    ${isWrongCellValue ? "bg-red-100 text-red-500" : ""}
                          
                          
                          flex justify-center items-center`}

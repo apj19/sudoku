@@ -3,7 +3,7 @@
 //   difficulty: "easy" | "medium" | "hard";
 // }
 
-import SEED from "../seed";
+
 import { countSolution } from "../solver";
 import { getRandomIndexIncludingEnd } from "./shuffleSeed";
 
@@ -61,8 +61,9 @@ function getMirrorCoordinate(row: number, col: number): [number, number] {
   return [8 - row, 8 - col];
 }
 
-export function generateNewGame(difficulty: "easy" | "medium" | "hard") {
-  const board = SEED.map((e) => [...e]);
+export function generateNewGame(shuffledBoard: number[][],difficulty: "easy" | "medium" | "hard") {
+
+  const board = shuffledBoard.map((e) => [...e]);
 
   const tartCellRemoval = getDifficultyTarget(difficulty);
 
