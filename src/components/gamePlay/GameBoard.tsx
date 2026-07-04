@@ -2,21 +2,14 @@ import { useEffect } from "react";
 import Cell from "./Cell";
 import { useGameStore } from "@/store/store";
 
-import SEED from "@/helper/seed";
-import generateShuffledBoard from "@/helper/gameGenerator/createNewGame";
 import { generateNewGame } from "@/helper/gameGenerator/generateNewGame";
 
 export default function GameBoard() {
   const mainBoard = useGameStore((state) => state.gameBoard);
   const currentSelectedCell = useGameStore((state) => state.selectedCell);
-  const highlitedCells = useGameStore((state) => state.HighliteSameCell);
+  const highliteSameCells = useGameStore((state) => state.HighliteSameCell);
   const connectedCell = useGameStore((state) => state.connectCell);
   const initialGameValue = useGameStore((state) => state.initialBoard);
-
-  // const setSelectedCell = useGameStore((state) => state.setSelectedCell);
-  // const updateHighliteCells = useGameStore(
-  //   (state) => state.updateHighliteSameCell,
-  // );
 
   const isSolving = useGameStore((state) => state.isSolving);
   const SolverSpeed = useGameStore((state) => state.speed);
@@ -32,22 +25,19 @@ export default function GameBoard() {
   );
   const setNewGameBoard = useGameStore((state) => state.setGameBoard);
 
+  const gameDifficulty = useGameStore((state) => state.difficulty);
+
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
-    const seed: number[][] = SEED;
+    // console.group("difficulty changes");
 
-    // const newGame = shuffleWithinRowBand(seed);
-    // const n2 = shuffleWithinColBand(newGame);
-
-    const boardSolution = generateShuffledBoard(seed);
-
-    const newGame = generateNewGame(boardSolution, "medium");
+    const newGame = generateNewGame(gameDifficulty);
 
     //replace with main game logic
     setNewGameBoardInitialValue(newGame); //
     setNewGameBoard(newGame);
-  }, []);
+  }, [gameDifficulty]);
 
   //this use effect handles windows keyboard events
 
@@ -121,7 +111,7 @@ export default function GameBoard() {
                 currentSelectedCell?.[0] == idx &&
                 currentSelectedCell?.[1] == cdx
               }
-              highlitedCells={highlitedCells.has(`${idx}${cdx}`)}
+              highlitedCells={highliteSameCells.has(`${idx}${cdx}`)}
               connectedCell={connectedCell.has(`${idx}${cdx}`)}
               currentTryingCell={
                 tryingCell?.coordinate[0] == idx &&

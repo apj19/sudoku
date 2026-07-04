@@ -5,6 +5,11 @@ import { RotateCcw } from "lucide-react";
 import { Pen } from "lucide-react";
 // import { PenOff } from "lucide-react";
 import { Lightbulb } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 // export function ButtonIcon() {
 //   return (
 //     <Button variant="outline" size="icon">
@@ -77,6 +82,23 @@ export default function Controls() {
         >
           <RotateCcw />
         </Button>
+
+        {/* <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+              >
+                <Lightbulb />
+              </Button>
+            }
+          />
+          <TooltipContent side="top" align="end" sideOffset={6}>
+            <p>Fill Random or Current Selected Cell </p>
+          </TooltipContent>
+        </Tooltip> */}
         {/* //Erase cell */}
         <Button
           onClick={handleEraseCell}
@@ -95,6 +117,23 @@ export default function Controls() {
         >
           <Pen />
         </Button>
+
+        {/* <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+              >
+                <Lightbulb />
+              </Button>
+            }
+          />
+          <TooltipContent side="top" align="end" sideOffset={6}>
+            <p>Fill Random or Current Selected Cell </p>
+          </TooltipContent>
+        </Tooltip> */}
         {/* <Button variant="outline" size="lg">
           <PenOff />
         </Button> */}
@@ -107,6 +146,23 @@ export default function Controls() {
         >
           <Lightbulb />
         </Button>
+
+        {/* <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+              >
+                <Lightbulb />
+              </Button>
+            }
+          />
+          <TooltipContent side="top" align="end" sideOffset={6}>
+            <p>Fill Random or Current Selected Cell </p>
+          </TooltipContent>
+        </Tooltip> */}
       </div>
     </>
   );

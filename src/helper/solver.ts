@@ -136,7 +136,7 @@ export function boardSolver(newBoard: number[][]): boolean {
 
   let res = solve(board);
 
-  console.log(board);
+  // console.log(board);
 
   return res;
 }

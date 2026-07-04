@@ -8,7 +8,7 @@ import "./gamePlay.css";
 export default function GamePlay() {
   return (
     <>
-      <section className="game-layout  p-12 ">
+      <section className="game-layout  p-4 ">
         <div style={{ gridArea: "gameBoard" }}>
           <GameBoard />
         </div>

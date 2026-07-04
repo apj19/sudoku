@@ -1,4 +1,4 @@
-import generateNewGame from "@/helper/gameGenerator/createNewGame";
+import generateNewGame from "@/helper/gameGenerator/shuffleSeed";
 import { getDifficultyTarget } from "@/helper/gameGenerator/generateNewGame";
 import SEED from "@/helper/seed";
 import { fullBoardValidityCheck } from "@/helper/solver";

@@ -48,11 +48,17 @@ interface solverSlice {
   nextEvent: () => void;
 }
 
+interface gameDifficultySlice {
+  difficulty: "easy" | "medium" | "hard";
+  setDifficulty: (getDifficulty: "easy" | "medium" | "hard") => void;
+}
+
 type gameStore = GameBoardSlice &
   SelectCellSlice &
   HighliteSameCellSlice &
   connectCellSlice &
-  solverSlice;
+  solverSlice &
+  gameDifficultySlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -96,6 +102,13 @@ const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
   selectedCell: null,
   setSelectedCell: (x: number, y: number) =>
     set(() => ({ selectedCell: [x, y] as [number, number] })),
+});
+
+const gameDifficultySlice: AppSliceCreator<gameDifficultySlice> = (set) => ({
+  difficulty: "easy",
+  setDifficulty: (getDifficulty) => {
+    set(() => ({ difficulty: getDifficulty }));
+  },
 });
 
 const createHighliteSameCellSlice: AppSliceCreator<HighliteSameCellSlice> = (
@@ -182,6 +195,8 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createHighliteSameCellSlice(...a),
   ...createConnectCellSlice(...a),
   ...createSolverSlice(...a),
+  ...gameDifficultySlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));
+gameDifficultySlice;
