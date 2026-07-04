@@ -14,11 +14,11 @@ export function sum(a: number, b: number) {
   return a + b;
 }
 
-function getRandomIndexIncludingEnd(endIndex: number): number {
+export function getRandomIndexIncludingEnd(endIndex: number): number {
   return Math.floor(Math.random() * (endIndex + 1));
 }
 
-function fisherYatesShuffleArray(array: number[]): number[] {
+export function fisherYatesShuffleArray(array: number[]): number[] {
   let tempArray = [...array];
 
   for (let i = tempArray.length - 1; i > 0; i--) {
@@ -176,7 +176,7 @@ function shuffleDigits(previousShuffledBoard: number[][]): number[][] {
   return shuffledBoard;
 }
 
-export default function generateNewGame(seed: number[][]) {
+export default function generateShuffledBoard(seed: number[][]) {
   const withinRowBand = shuffleWithinRowBand(seed);
   const withinColBand = shuffleWithinColBand(withinRowBand);
   const rowBand = shuffleRowBand(withinColBand);

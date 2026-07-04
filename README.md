@@ -5,3 +5,6 @@
 3. render main grid
 4. handle select and value change on cell
 5. handle highlight same cell value in grid
+
+6. genrate shuffled boar
+7. test shulffle board 10000
