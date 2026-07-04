@@ -72,26 +72,36 @@ export default function solveSudoku(board: number[][], event: log[]): log[] {
   return event;
 }
 
-// export function isThisValidCell(r:number,c:number,value:number): boolean {
+export function fullBoardValidityCheck(board: number[][]): boolean {
+  const rows = Array.from({ length: 9 }, () => new Set<number>());
+  const Cols = Array.from({ length: 9 }, () => new Set<number>());
+  const box = Array.from({ length: 9 }, () => new Set<number>());
 
-//    for (let i = 0; i < 9; i++) {
-//       if (board[r][i] == value || board[i][c] == value) {
-//         return false;
-//       }
-//     }
-//     /// now in grid
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      let currentValue = board[r][c];
 
-//     const startRow = Math.floor(r / 3) * 3;
-//     const startCol = Math.floor(c / 3) * 3;
-//     for (let i = startRow; i < startRow + 3; i++) {
-//       for (let j = startCol; j < startCol + 3; j++) {
-//         if (board[i][j] === d) {
-//           // Digit already in 3x3 sub-box
-//           return false;
-//         }
-//       }
-//     }
+      if (rows[r].has(currentValue)) {
+        return false;
+      } else {
+        rows[r].add(currentValue);
+      }
+      //col check
 
-//     return true;
+      if (Cols[c].has(currentValue)) {
+        return false;
+      } else {
+        Cols[c].add(currentValue);
+      }
+      const boxIdx = Math.floor(r / 3) * 3 + Math.floor(c / 3);
 
-// }
+      if (box[boxIdx].has(currentValue)) {
+        return false;
+      } else {
+        box[boxIdx].add(currentValue);
+      }
+    }
+  }
+
+  return true;
+}
