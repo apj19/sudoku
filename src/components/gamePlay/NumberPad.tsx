@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { useGameStore } from "@/store/store";
 
 export default function NumberPad() {
-  
   const updateGameBoardWithCoordinate = useGameStore(
     (state) => state.updateGameBoardWithCoordinate,
   );
@@ -12,12 +11,10 @@ export default function NumberPad() {
   function handleNumPadClick(num: number) {
     if (!currentSelectedCell) return;
 
-    
-
     const [x, y] = currentSelectedCell;
 
-      //checking for default value
-    if(initialGameValue[x][y] !=0) return;
+    //checking for default value
+    if (initialGameValue[x][y] != 0) return;
 
     // updateHighliteCells(num);
     updateGameBoardWithCoordinate(x, y, num);

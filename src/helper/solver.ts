@@ -45,7 +45,7 @@ export default function solveSudoku(board: number[][], event: log[]): log[] {
     board: number[][],
     r: number,
     c: number,
-    d: number
+    d: number,
   ): boolean {
     for (let i = 0; i < 9; i++) {
       if (board[r][i] == d || board[i][c] == d) {
@@ -71,3 +71,27 @@ export default function solveSudoku(board: number[][], event: log[]): log[] {
   solve(board);
   return event;
 }
+
+// export function isThisValidCell(r:number,c:number,value:number): boolean {
+
+//    for (let i = 0; i < 9; i++) {
+//       if (board[r][i] == value || board[i][c] == value) {
+//         return false;
+//       }
+//     }
+//     /// now in grid
+
+//     const startRow = Math.floor(r / 3) * 3;
+//     const startCol = Math.floor(c / 3) * 3;
+//     for (let i = startRow; i < startRow + 3; i++) {
+//       for (let j = startCol; j < startCol + 3; j++) {
+//         if (board[i][j] === d) {
+//           // Digit already in 3x3 sub-box
+//           return false;
+//         }
+//       }
+//     }
+
+//     return true;
+
+// }

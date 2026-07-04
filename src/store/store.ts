@@ -10,6 +10,7 @@ interface GameBoardSlice {
   setGameBoard: (newBoard: number[][]) => void;
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => void;
   setInitialBoard: (newBoard: number[][]) => void;
+  startNewGame: (newGame: number[][]) => void;
 }
 
 interface SelectCellSlice {
@@ -74,6 +75,21 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
 
     set({ gameBoard: updatedBoard });
   },
+
+  startNewGame: (newGame: number[][]) => {
+    const { setInitialBoard, setGameBoard } = get();
+
+    setInitialBoard(newGame); //this will save initial state of board
+    //set main game board
+    setGameBoard(newGame);
+    //default select cell state
+
+    set({
+      selectedCell: null,
+      HighliteSameCell: new Set(),
+      connectCell: new Set(),
+    });
+  },
 });
 
 const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
@@ -109,7 +125,7 @@ const createConnectCellSlice: AppSliceCreator<connectCellSlice> = (set) => ({
 //   eventLog:log[],
 
 //   setIsSolving:()=>void,
-//   setSpeed:(newspeed:number)=> void
+//   setSpeed:(newSpeed:number)=> void
 //   setIndex:(newIdx:number)=> void
 //   setEventLog:()=> void
 // }

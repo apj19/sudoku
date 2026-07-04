@@ -45,7 +45,7 @@ function Cell({
     updateHighliteCells(cellValue);
   }
 
-  // console.log(xCoordinate, yCoordinate);
+  // console.log("cell rerender", xCoordinate, yCoordinate);
 
   return (
     //
