@@ -7,6 +7,8 @@ import SEED from "@/helper/seed";
 import generateShuffledBoard from "@/helper/gameGenerator/shuffleSeed";
 import { Button } from "../ui/button";
 import GameTypeSelector from "../ui/GameTypeSelector";
+import { Play } from "lucide-react";
+import { CirclePause } from "lucide-react";
 
 export default function GameBoard() {
   const mainBoard = useGameStore((state) => state.gameBoard);
@@ -39,6 +41,8 @@ export default function GameBoard() {
   const gameID = useGameStore((state) => state.gameId);
 
   const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);
+  const startTimer = useGameStore((state) => state.startTimer);
+  const changTimerState = useGameStore((state) => state.timerState);
 
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
@@ -129,7 +133,7 @@ export default function GameBoard() {
         <></>
       )}
 
-      <div className=" grid grid-cols-9 grid-rows-9 aspect-square w-full max-w-125 border-2 border-foreground/50  ">
+      <div className=" grid grid-cols-9 grid-rows-9 aspect-square w-full max-w-125 border-2 border-foreground/50 relative  ">
         {mainBoard.map((row, idx) =>
           row.map((col, cdx) => (
             <Cell
@@ -155,6 +159,23 @@ export default function GameBoard() {
             />
           )),
         )}
+
+        <div>
+          {startTimer ? (
+            <></>
+          ) : (
+            <div className="absolute top-1/2 left-1/2 z-50 grid justify-center items-center backdrop-blur-sm w-full h-full -translate-x-1/2 -translate-y-1/2">
+              <Button
+                onClick={() => changTimerState()}
+                variant="outline"
+                size="icon"
+                className="h-7 w-7 md:h-9 md:w-9 text-[#7091D5] cursor-pointer bg-popover"
+              >
+                {startTimer ? <CirclePause /> : <Play />}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

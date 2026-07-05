@@ -84,6 +84,14 @@ interface undoSlice {
   undoAction: () => void;
 }
 
+interface TimerSlice {
+  timeInSec: number;
+  incrementTime: () => void;
+  startTimer: boolean;
+
+  timerState: () => void;
+}
+
 ///Setting only Action Slices
 
 interface EraseActionSlice {
@@ -99,7 +107,8 @@ type gameStore = GameBoardSlice &
   isWrongCellValueSlice &
   mistakeSlice &
   undoSlice &
-  EraseActionSlice;
+  EraseActionSlice &
+  TimerSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -149,6 +158,8 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       HighliteSameCell: new Set(),
       connectCell: new Set(),
       isWrongCellValue: null,
+      timeInSec: 0,
+      startTimer: true,
     });
   },
 
@@ -319,12 +330,23 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
 
 const createMistakeSlice: AppSliceCreator<mistakeSlice> = (set) => ({
   mistakeCount: 0,
-  maxMistakeCount: 100,
+  maxMistakeCount: 3,
   updateMistakeCount: () => {
     set((state) => ({ mistakeCount: state.mistakeCount + 1 }));
   },
   resetMistakeCount: () => {
     set(() => ({ mistakeCount: 0 }));
+  },
+});
+
+const createTimerSlice: AppSliceCreator<TimerSlice> = (set) => ({
+  timeInSec: 0,
+  incrementTime: () => {
+    set((state) => ({ timeInSec: state.timeInSec + 1 }));
+  },
+  startTimer: true,
+  timerState: () => {
+    set((state) => ({ startTimer: !state.startTimer }));
   },
 });
 
@@ -369,6 +391,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createMistakeSlice(...a),
   ...createUndoSlice(...a),
   ...createEraseActionSlice(...a),
+  ...createTimerSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));

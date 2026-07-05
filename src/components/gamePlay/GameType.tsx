@@ -17,7 +17,7 @@ export default function GameType() {
 
       <GameTypeSelector />
 
-      <p className="text-green-400">{gameDifficulty.toUpperCase()}</p>
+      <p className="text-[#7091D5]">{gameDifficulty.toUpperCase()}</p>
 
       <Link to="/solver">
         <Button size={"lg"} variant="secondary">
