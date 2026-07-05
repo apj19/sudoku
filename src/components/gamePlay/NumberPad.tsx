@@ -7,6 +7,7 @@ export default function NumberPad() {
   );
   const currentSelectedCell = useGameStore((state) => state.selectedCell);
   const initialGameValue = useGameStore((state) => state.initialBoard);
+  const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);
 
   function handleNumPadClick(num: number) {
     if (!currentSelectedCell) return;
@@ -17,7 +18,8 @@ export default function NumberPad() {
     if (initialGameValue[x][y] != 0) return;
 
     // updateHighliteCells(num);
-    updateGameBoardWithCoordinate(x, y, num);
+    // updateGameBoardWithCoordinate(x, y, num);
+    updateGameBoardWithLog(x, y, num);
 
     // console.group(num);
   }

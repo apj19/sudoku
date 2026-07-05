@@ -7,12 +7,14 @@ import { create, type StateCreator } from "zustand";
 interface GameBoardSlice {
   gameBoard: number[][];
   initialBoard: number[][];
-  solution:number[][]
-  setSolution:(solution:number[][])=>void
+  solution: number[][];
+  setSolution: (solution: number[][]) => void;
   setGameBoard: (newBoard: number[][]) => void;
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => void;
   setInitialBoard: (newBoard: number[][]) => void;
   startNewGame: (newGame: number[][]) => void;
+
+  updateGameBoard: (x: number, y: number, value: number) => void;
 }
 
 interface SelectCellSlice {
@@ -54,14 +56,14 @@ interface mistakeSlice {
   mistakeCount: number;
   updateMistakeCount: () => void;
   maxMistakeCount: number;
-  resetMistakeCount:()=>void
+  resetMistakeCount: () => void;
 }
 
 interface gameDifficultySlice {
   difficulty: "easy" | "medium" | "hard";
   setDifficulty: (getDifficulty: "easy" | "medium" | "hard") => void;
   gameId: number; //this for when game changes it should trigger re render
-  incrementGameId:()=>void
+  incrementGameId: () => void;
 }
 
 interface isWrongCellValueSlice {
@@ -69,12 +71,35 @@ interface isWrongCellValueSlice {
   updateIsWrongCellValue: (x: number, y: number) => void;
 }
 
+type undoLog = {
+  xCoordinate: number;
+  yCoordinate: number;
+  oldValue: number;
+  newValue: number;
+};
+
+interface undoSlice {
+  undoStack: undoLog[];
+  updateUndoStack: (log: undoLog) => void;
+  undoAction: () => void;
+}
+
+///Setting only Action Slices
+
+interface EraseActionSlice {
+  EraseAction: () => void;
+}
+
 type gameStore = GameBoardSlice &
   SelectCellSlice &
   HighliteSameCellSlice &
   connectCellSlice &
   solverSlice &
-  gameDifficultySlice & isWrongCellValueSlice & mistakeSlice;
+  gameDifficultySlice &
+  isWrongCellValueSlice &
+  mistakeSlice &
+  undoSlice &
+  EraseActionSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -82,13 +107,13 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   gameBoard: [],
   initialBoard: [],
   solution: [],
-  setSolution: (solution: number[][]) =>
-    set(() => ({ solution: solution })),
+  setSolution: (solution: number[][]) => set(() => ({ solution: solution })),
   setInitialBoard: (newBoard: number[][]) =>
     set(() => ({ initialBoard: newBoard })),
   setGameBoard: (newBoard: number[][]) => set(() => ({ gameBoard: newBoard })),
+
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => {
-    const { gameBoard, updateHighliteSameCell,solution } = get();
+    const { gameBoard, updateHighliteSameCell, solution } = get();
     const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
     if (updatedBoard[x][y] == value) {
       updatedBoard[x][y] = 0;
@@ -98,19 +123,21 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       updateHighliteSameCell(value);
     }
 
-    if(solution[x][y]!==value){
-      set((state)=>({ gameBoard: updatedBoard,isWrongCellValue: [x, y] as [number, number],mistakeCount:state.mistakeCount+1 }));
-    }else{
-      set({ gameBoard: updatedBoard,isWrongCellValue: null });
+    //solution check
+
+    if (solution[x][y] !== value) {
+      set((state) => ({
+        gameBoard: updatedBoard,
+        isWrongCellValue: [x, y] as [number, number],
+        mistakeCount: state.mistakeCount + 1,
+      }));
+    } else {
+      set({ gameBoard: updatedBoard, isWrongCellValue: null });
     }
-
-    
-
-    
   },
 
   startNewGame: (newGame: number[][]) => {
-    const {  setGameBoard } = get();
+    const { setGameBoard } = get();
 
     // setInitialBoard(newGame); //this will save initial state of board
     //set main game board
@@ -121,17 +148,81 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       selectedCell: null,
       HighliteSameCell: new Set(),
       connectCell: new Set(),
-      isWrongCellValue:null
+      isWrongCellValue: null,
     });
+  },
+
+  updateGameBoard: (x: number, y: number, value: number) => {
+    const { updateGameBoardWithCoordinate, gameBoard, updateUndoStack } = get();
+
+    updateGameBoardWithCoordinate(x, y, value);
+
+    let log: undoLog = {
+      xCoordinate: x,
+      yCoordinate: y,
+      oldValue: gameBoard[x][y],
+      newValue: value,
+    };
+
+    if (gameBoard[x][y] == value) {
+      log.newValue = 0;
+    } else {
+      log.newValue = value;
+    }
+
+    //adding to log
+    updateUndoStack(log);
   },
 });
 
-const createIsWrongCellValueSlice: AppSliceCreator<isWrongCellValueSlice> = (set) => ({
+const createUndoSlice: AppSliceCreator<undoSlice> = (set, get) => ({
+  undoStack: [],
+  updateUndoStack: (log: undoLog) => {
+    const { undoStack } = get();
+
+    const newStack: undoLog[] = [...undoStack];
+    newStack.push(log);
+
+    set({ undoStack: newStack });
+  },
+
+  undoAction: () => {
+    const {
+      undoStack,
+      updateGameBoardWithCoordinate,
+      updateConnectCell,
+      setSelectedCell,
+    } = get();
+
+    let currentLog = undoStack.pop();
+
+    if (!currentLog) return;
+    // set({ isWrongCellValue: null });
+
+    updateGameBoardWithCoordinate(
+      currentLog.xCoordinate,
+      currentLog.yCoordinate,
+      currentLog.oldValue,
+    );
+
+    let updatedLog = [...undoStack];
+    updateConnectCell(currentLog.xCoordinate, currentLog.yCoordinate);
+    setSelectedCell(currentLog.xCoordinate, currentLog.yCoordinate);
+
+    set((state) => ({
+      undoStack: updatedLog,
+      isWrongCellValue: null,
+      mistakeCount: state.mistakeCount - 1,
+    }));
+  },
+});
+
+const createIsWrongCellValueSlice: AppSliceCreator<isWrongCellValueSlice> = (
+  set,
+) => ({
   isWrongCellValue: null,
   updateIsWrongCellValue: (x: number, y: number) =>
-
     set({ isWrongCellValue: [x, y] as [number, number] }),
-
 });
 
 const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
@@ -145,8 +236,8 @@ const gameDifficultySlice: AppSliceCreator<gameDifficultySlice> = (set) => ({
   setDifficulty: (getDifficulty) => {
     set(() => ({ difficulty: getDifficulty }));
   },
-  gameId:0,
-  incrementGameId:()=>set((state)=>({gameId:state.gameId+1}))
+  gameId: 0,
+  incrementGameId: () => set((state) => ({ gameId: state.gameId + 1 })),
 });
 
 const createHighliteSameCellSlice: AppSliceCreator<HighliteSameCellSlice> = (
@@ -226,16 +317,45 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
   },
 });
 
-const createMistakeSlice:AppSliceCreator<mistakeSlice> = (set)=>({
-  mistakeCount:0,
-  maxMistakeCount:3,
-  updateMistakeCount:()=>{
-    set((state)=>({mistakeCount:state.mistakeCount+1}))
+const createMistakeSlice: AppSliceCreator<mistakeSlice> = (set) => ({
+  mistakeCount: 0,
+  maxMistakeCount: 100,
+  updateMistakeCount: () => {
+    set((state) => ({ mistakeCount: state.mistakeCount + 1 }));
   },
-  resetMistakeCount:()=>{
-    set(()=>({mistakeCount:0}))
-  }
-})
+  resetMistakeCount: () => {
+    set(() => ({ mistakeCount: 0 }));
+  },
+});
+
+//below are action slices
+
+const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
+  set,
+  get,
+) => ({
+  EraseAction: () => {
+    const { selectedCell, initialBoard, gameBoard, setGameBoard } = get();
+
+    if (!selectedCell) return;
+
+    const [x, y] = selectedCell;
+
+    if (initialBoard[x][y] != 0) return; //default value so return
+
+    if (gameBoard[x][y] == 0) return; //cell is empty
+
+    const newGameBoard = gameBoard.map((e) => [...e]);
+    newGameBoard[x][y] = 0;
+
+    setGameBoard(newGameBoard);
+
+    set({
+      HighliteSameCell: new Set(),
+      isWrongCellValue: null,
+    });
+  },
+});
 
 //here we combine slice
 export const useGameStore = create<gameStore>()((...a) => ({
@@ -247,7 +367,10 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...gameDifficultySlice(...a),
   ...createIsWrongCellValueSlice(...a),
   ...createMistakeSlice(...a),
+  ...createUndoSlice(...a),
+  ...createEraseActionSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));
-gameDifficultySlice;
+// gameDifficultySlice;
+// createUndoSlice

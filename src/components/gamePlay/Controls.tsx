@@ -45,24 +45,36 @@ export default function Controls() {
     restGame(initialBoard);
   }
 
+  function handleUndoAction() {
+    console.log("undo clicked");
+
+    const undoAction = useGameStore.getState().undoAction;
+
+    undoAction();
+  }
+
   function handleEraseCell() {
-    const selectedCellCoordinate = useGameStore.getState().selectedCell;
-    const initialBoard = useGameStore.getState().initialBoard;
-    const currentBoard = useGameStore.getState().gameBoard;
-    const EraseCellValue = useGameStore.getState().setGameBoard;
+    // const selectedCellCoordinate = useGameStore.getState().selectedCell;
+    // const initialBoard = useGameStore.getState().initialBoard;
+    // const currentBoard = useGameStore.getState().gameBoard;
+    // const EraseCellValue = useGameStore.getState().setGameBoard;
 
-    if (!selectedCellCoordinate) return;
+    // if (!selectedCellCoordinate) return;
 
-    const [x, y] = selectedCellCoordinate;
+    // const [x, y] = selectedCellCoordinate;
 
-    if (initialBoard[x][y] != 0) return; //default value so return
+    // if (initialBoard[x][y] != 0) return; //default value so return
 
-    if (currentBoard[x][y] == 0) return; //cell is empty
+    // if (currentBoard[x][y] == 0) return; //cell is empty
 
-    const newGameBoard = currentBoard.map((e) => [...e]);
-    newGameBoard[x][y] = 0;
+    // const newGameBoard = currentBoard.map((e) => [...e]);
+    // newGameBoard[x][y] = 0;
 
-    EraseCellValue(newGameBoard);
+    // EraseCellValue(newGameBoard);
+
+    const eraseAction = useGameStore.getState().EraseAction;
+
+    eraseAction();
     console.log("erased");
   }
 
@@ -75,7 +87,7 @@ export default function Controls() {
       <div className="flex items-center justify-between  min-h-12     w-full">
         {/* //Reset game board */}
         <Button
-          onClick={handleRestBoard}
+          onClick={handleUndoAction}
           variant="outline"
           size="icon"
           className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5] cursor-pointer"

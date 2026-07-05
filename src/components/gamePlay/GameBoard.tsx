@@ -30,28 +30,30 @@ export default function GameBoard() {
   const setNewGameBoard = useGameStore((state) => state.setGameBoard);
 
   const gameDifficulty = useGameStore((state) => state.difficulty);
-  const setGameSolution=useGameStore((state)=>state.setSolution);
-  const wrongCell= useGameStore((state)=>(state.isWrongCellValue))
-  const currentMistakeCount=useGameStore((state)=>(state.mistakeCount))
-  const maxMistakeCount=useGameStore((state)=>(state.maxMistakeCount))
-  const resetMistake=useGameStore((state)=>(state.resetMistakeCount))
-  const startNewGame=useGameStore((state)=>(state.startNewGame))
-  const gameID=useGameStore((state)=>state.gameId)
+  const setGameSolution = useGameStore((state) => state.setSolution);
+  const wrongCell = useGameStore((state) => state.isWrongCellValue);
+  const currentMistakeCount = useGameStore((state) => state.mistakeCount);
+  const maxMistakeCount = useGameStore((state) => state.maxMistakeCount);
+  const resetMistake = useGameStore((state) => state.resetMistakeCount);
+  const startNewGame = useGameStore((state) => state.startNewGame);
+  const gameID = useGameStore((state) => state.gameId);
+
+  const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);
 
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
     // console.group("difficulty changes");
-    const shuffledBoard=generateShuffledBoard(SEED);
+    const shuffledBoard = generateShuffledBoard(SEED);
 
-    const newGame = generateNewGame(shuffledBoard,gameDifficulty);
+    const newGame = generateNewGame(shuffledBoard, gameDifficulty);
 
     //replace with main game logic
     setGameSolution(shuffledBoard);
     setNewGameBoardInitialValue(newGame); //
     startNewGame(newGame);
     resetMistake();
-  }, [gameDifficulty,gameID]);
+  }, [gameDifficulty, gameID]);
 
   //this use effect handles windows keyboard events
 
@@ -79,7 +81,8 @@ export default function GameBoard() {
         //   // updatedBoard[row][col] = Number(e.key);
         // updateHighliteCells(Number(e.key));
 
-        updateGameBoardWithCoordinate(row, col, Number(e.key));
+        // updateGameBoardWithCoordinate(row, col, Number(e.key));
+        updateGameBoardWithLog(row, col, Number(e.key));
       }
       // else if (e.key.startsWith("Arrow")) {
       //   e.preventDefault();
@@ -113,17 +116,19 @@ export default function GameBoard() {
     //grid grid-rows-9 gap-0
     //grid grid-cols-9 gap-0
     <>
-    {currentMistakeCount==maxMistakeCount ? <div className="fixed top-1/2 left-1/2 z-50 grid justify-center items-center  backdrop-blur-sm w-full h-full -translate-x-1/2 -translate-y-1/2">
-    <div className="flex flex-col items-center justify-center gap-5 bg-popover p-5 rounded-lg">
-      <p className="text-2xl font-bold">Game Over</p>
-      <p>You have made 3 mistakes and lost the game</p>
-      
-        <GameTypeSelector/>
-      
-    </div>
-    
-    </div>  : <></>}
-    
+      {currentMistakeCount == maxMistakeCount ? (
+        <div className="fixed top-1/2 left-1/2 z-50 grid justify-center items-center  backdrop-blur-sm w-full h-full -translate-x-1/2 -translate-y-1/2">
+          <div className="flex flex-col items-center justify-center gap-5 bg-popover p-5 rounded-lg">
+            <p className="text-2xl font-bold">Game Over</p>
+            <p>You have made 3 mistakes and lost the game</p>
+
+            <GameTypeSelector />
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+
       <div className=" grid grid-cols-9 grid-rows-9 aspect-square w-full max-w-125 border-2 border-foreground/50  ">
         {mainBoard.map((row, idx) =>
           row.map((col, cdx) => (
@@ -144,7 +149,9 @@ export default function GameBoard() {
               }
               currentTryingEvent={tryingCell?.event || "TRY"}
               isDefaultValue={initialGameValue[idx][cdx] != 0}
-              isWrongCellValue={wrongCell?.[0]===idx && wrongCell?.[1]===cdx}
+              isWrongCellValue={
+                wrongCell?.[0] === idx && wrongCell?.[1] === cdx
+              }
             />
           )),
         )}

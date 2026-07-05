@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import GameTypeSelector from "../ui/GameTypeSelector";
+import { useGameStore } from "@/store/store";
 
 // export function ButtonSecondary() {
 //   return <Button variant="secondary">Secondary</Button>
 // }
 
 export default function GameType() {
+  const gameDifficulty = useGameStore((state) => state.difficulty);
   return (
     <div className="flex  justify-between items-center min-h-8 md:min-h-12    ">
       {/* <Button size={"lg"} variant="secondary">
@@ -15,7 +17,7 @@ export default function GameType() {
 
       <GameTypeSelector />
 
-      <p className="text-green-400">Easy</p>
+      <p className="text-green-400">{gameDifficulty.toUpperCase()}</p>
 
       <Link to="/solver">
         <Button size={"lg"} variant="secondary">
