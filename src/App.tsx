@@ -12,6 +12,7 @@ import Header from "./components/Header";
 import GamePlay from "./components/gamePlay/GamePlay";
 import Solver from "./components/solver/Solver";
 import NotFound from "./components/NotFound";
+import SolverGuard from "./components/SolverGaurd";
 
 type log = {
   event: "TRY" | "PLACE" | "BACKTRACK";
@@ -135,59 +136,6 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </section>
-
-      {/* <div className=" w-90 h-90 [&>*:nth-child(1)]:border-t-2  [&>*:nth-child(3n)]:border-b-2 text-black">
-        {mainBoard.map((row, idx) => (
-          <div
-            key={idx}
-            className="flex [&>*:nth-child(3n)]:border-r-2   [&>*:nth-child(1)]:border-l-2
-      
-      "
-          >
-            {" "}
-            {row.map((col, cdx) => (
-              <div
-                key={cdx}
-                className=" bg-[#ffffff] flex justify-center items-center  "
-              >
-                {" "}
-                <input
-                  className={`h-10 w-10   border border-gray-300 text-center cursor-pointer caret-transparent  
-                     focus:bg-blue-300 
-                     ${
-                       checkCellValue.has(`${idx}${cdx}`)
-                         ? "text-red-500"
-                         : "text-black"
-                     }
-                     ${focusedCell.has(`${idx}${cdx}`) ? "bg-blue-100" : ""}
-                     ${sameCellValue.has(`${idx}${cdx}`) ? "bg-blue-300" : ""}
-                     ${
-                       tryValue?.coordinate == `${idx}${cdx}`
-                         ? solvingStyle[tryValue.event]
-                         : ""
-                     }
-
-                     `}
-                  type="text"
-                  value={col == 0 ? "" : col}
-                  onChange={(event) => handleChange(idx, cdx, event)}
-                  onClick={() => hanleClick(idx, cdx)}
-                />{" "}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div> */}
-      {/* <div>
-        <button
-          type="button"
-          className="text-white mt-10 bg-blue-400 box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-full text-sm px-4 py-2.5 focus:outline-none"
-          onClick={handleSolver}
-        >
-          Solve It!
-        </button>
-        <div>counster-{counter}</div>
-      </div> */}
     </>
   );
 }

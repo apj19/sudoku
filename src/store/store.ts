@@ -146,11 +146,12 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   },
 
   startNewGame: (newGame: number[][]) => {
-    const { setGameBoard } = get();
+    const { setGameBoard, setEventLog } = get();
 
     // setInitialBoard(newGame); //this will save initial state of board
     //set main game board
     setGameBoard(newGame);
+    setEventLog();
     //default select cell state
 
     set({
@@ -160,6 +161,9 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       isWrongCellValue: null,
       timeInSec: 0,
       startTimer: true,
+      currentActiveCell: null,
+      isSolving: false,
+      index:-1
     });
   },
 
@@ -270,22 +274,9 @@ const createConnectCellSlice: AppSliceCreator<connectCellSlice> = (set) => ({
     set(() => ({ connectCell: new Set<string>(connectedCells(x, y)) })),
 });
 
-// interface solverSlice{
-//   isSolving:boolean,
-//   speed:number,
-//   index:number,
-//   currentActiveCell:  [number, number] | null;
-//   eventLog:log[],
-
-//   setIsSolving:()=>void,
-//   setSpeed:(newSpeed:number)=> void
-//   setIndex:(newIdx:number)=> void
-//   setEventLog:()=> void
-// }
-
 const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
   isSolving: false,
-  speed: 400,
+  speed: 200,
   index: -1,
   currentActiveCell: null,
   eventLog: [],

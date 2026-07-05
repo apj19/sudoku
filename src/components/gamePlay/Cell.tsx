@@ -27,6 +27,8 @@ function Cell({
   isDefaultValue,
   isWrongCellValue,
 }: CellProps) {
+
+  
   const solvingStyle = {
     TRY: "bg-yellow-200",
     PLACE: "bg-green-200",

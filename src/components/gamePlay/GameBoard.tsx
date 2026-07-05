@@ -44,10 +44,13 @@ export default function GameBoard() {
   const startTimer = useGameStore((state) => state.startTimer);
   const changTimerState = useGameStore((state) => state.timerState);
 
+
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
     // console.group("difficulty changes");
+
+    //moving here back from solver
     const shuffledBoard = generateShuffledBoard(SEED);
 
     const newGame = generateNewGame(shuffledBoard, gameDifficulty);
@@ -57,6 +60,7 @@ export default function GameBoard() {
     setNewGameBoardInitialValue(newGame); //
     startNewGame(newGame);
     resetMistake();
+    
   }, [gameDifficulty, gameID]);
 
   //this use effect handles windows keyboard events
@@ -103,16 +107,16 @@ export default function GameBoard() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [currentSelectedCell]);
 
-  useEffect(() => {
-    // console.log("issloving use effect", isSolving);
-    if (!isSolving) return;
+  // useEffect(() => {
+  //   // console.log("issloving use effect", isSolving);
+  //   if (!isSolving) return;
 
-    const interval = setInterval(() => {
-      nextSolvingStep();
-    }, SolverSpeed);
+  //   const interval = setInterval(() => {
+  //     nextSolvingStep();
+  //   }, SolverSpeed);
 
-    return () => clearInterval(interval);
-  }, [isSolving, SolverSpeed]);
+  //   return () => clearInterval(interval);
+  // }, [isSolving, SolverSpeed]);
 
   return (
     //  className="  [&>*:nth-child(1)]:border-t-2  [&>*:nth-child(3n)]:border-b-2"
