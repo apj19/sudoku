@@ -1,5 +1,6 @@
 import { useGameStore } from "@/store/store";
 import { Button } from "../ui/button";
+import GameTypeSelector from "../ui/GameTypeSelector";
 
 export default function SolverControls() {
   const startSolver = useGameStore((state) => state.setIsSolving);
@@ -9,8 +10,11 @@ export default function SolverControls() {
   }
   return (
     <>
-      <Button onClick={handleStartSolver}>Start</Button>
-      <>{TotalSteps}</>
+      <div>
+        <Button onClick={handleStartSolver}>Start</Button>
+        <p>{TotalSteps}</p>
+        <GameTypeSelector />
+      </div>
     </>
   );
 }

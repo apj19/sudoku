@@ -163,7 +163,8 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       startTimer: true,
       currentActiveCell: null,
       isSolving: false,
-      index:-1
+      index: -1,
+      undoStack: [],
     });
   },
 

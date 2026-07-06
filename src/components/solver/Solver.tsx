@@ -22,6 +22,9 @@ export default function Solver() {
 
   }, []);
 
+
+  
+
   return (
     <>
       <section className="solver-layout  p-4 ">
