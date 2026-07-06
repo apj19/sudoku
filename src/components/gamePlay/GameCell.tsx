@@ -7,33 +7,28 @@ interface CellProps {
   currentSelectedCell: boolean;
   highlitedCells: boolean;
   connectedCell: boolean;
-  currentTryingCell: boolean;
-  currentTryingEvent: "TRY" | "PLACE" | "BACKTRACK";
   isDefaultValue: boolean;
-  isWrongCellValue:boolean
+  isWrongCellValue: boolean;
 }
 
 import { memo } from "react";
+import BaseCell from "../BaseCell";
 
-function Cell({
+function GameCell({
   cellValue,
   xCoordinate,
   yCoordinate,
   currentSelectedCell,
   highlitedCells,
   connectedCell,
-  currentTryingCell,
-  currentTryingEvent,
   isDefaultValue,
   isWrongCellValue,
 }: CellProps) {
-
-  
-  const solvingStyle = {
-    TRY: "bg-yellow-200",
-    PLACE: "bg-green-200",
-    BACKTRACK: "bg-red-200",
-  };
+  // const solvingStyle = {
+  //   TRY: "bg-yellow-200",
+  //   PLACE: "bg-green-200",
+  //   BACKTRACK: "bg-red-200",
+  // };
   //subscribed to action will not cause re render
   const setSelectedCell = useGameStore((state) => state.setSelectedCell);
   const updatedConnectCells = useGameStore((state) => state.updateConnectCell);
@@ -49,12 +44,45 @@ function Cell({
     updateHighliteCells(cellValue);
   }
 
+  function generateBackgrodCssFromProps(): string {
+    let res: string = "";
+
+    if (currentSelectedCell) {
+      res = res + " " + "bg-blue-200";
+    }
+
+    if (highlitedCells) {
+      res = res + " " + "bg-blue-200";
+    }
+
+    if (connectedCell) {
+      res = res + " " + "bg-blue-100";
+    }
+
+    if (!isDefaultValue) {
+      res = res + " " + "text-[#7091D5] font-bold";
+    }
+
+    if (isWrongCellValue) {
+      res = res + " " + "bg-red-100 text-red-500";
+    }
+
+    return res;
+  }
+
   // console.log("cell rerender", xCoordinate, yCoordinate);
 
   return (
     //
     <>
-      <div
+      <BaseCell
+        onClick={handleCellClick}
+        cellValue={cellValue}
+        xCoordinate={xCoordinate}
+        yCoordinate={yCoordinate}
+        bgColor={generateBackgrodCssFromProps()}
+      ></BaseCell>
+      {/* <div
         onClick={handleCellClick}
         className={` border border-gray-300 text-center cursor-pointer caret-transparent  
                      ${currentSelectedCell ? "bg-blue-200" : ""} 
@@ -71,9 +99,9 @@ function Cell({
                          flex justify-center items-center`}
       >
         {cellValue == 0 ? "" : cellValue}
-      </div>
+      </div> */}
     </>
   );
 }
 
-export default memo(Cell);
+export default memo(GameCell);
