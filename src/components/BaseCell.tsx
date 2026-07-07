@@ -6,6 +6,8 @@ interface BaseCellProps {
   yCoordinate: number;
   bgColor?: string;
   onClick?: () => void;
+  notes?: number[];
+  noteMode?: boolean;
 }
 
 function BaseCell({
@@ -14,6 +16,8 @@ function BaseCell({
   yCoordinate,
   bgColor,
   onClick,
+  notes,
+  noteMode,
 }: BaseCellProps) {
   return (
     <div
@@ -26,7 +30,39 @@ function BaseCell({
                          
                          flex justify-center items-center`}
     >
-      {cellValue == 0 ? "" : cellValue}
+      {/* {noteMode && cellValue == 0 ? (
+        <div className="grid grid-cols-3 grid-rows-3 w-full h-full">
+          {""}
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((e) => (
+            <div
+              key={e}
+              className="flex items-center justify-center h-full w-full text-xs"
+            >
+              {notes?.includes(e) ? e : ""}
+            </div>
+          ))}
+        </div>
+      ) : cellValue == 0 ? (
+        ""
+      ) : (
+        cellValue
+      )} */}
+
+      {cellValue == 0 ? (
+        <div className="grid grid-cols-3 grid-rows-3 w-full h-full">
+          {""}
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((e) => (
+            <div
+              key={e}
+              className="flex items-center justify-center h-full w-full text-xs"
+            >
+              {notes?.includes(e) ? e : ""}
+            </div>
+          ))}
+        </div>
+      ) : (
+        cellValue
+      )}
     </div>
   );
 }

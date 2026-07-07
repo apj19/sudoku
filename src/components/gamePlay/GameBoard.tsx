@@ -33,6 +33,9 @@ export default function GameBoard() {
   const startTimer = useGameStore((state) => state.startTimer);
   const changTimerState = useGameStore((state) => state.timerState);
 
+  const noteMode = useGameStore((state) => state.noteMode);
+  const notes = useGameStore((state) => state.notes);
+
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
@@ -110,6 +113,8 @@ export default function GameBoard() {
               isWrongCellValue={
                 wrongCell?.[0] === idx && wrongCell?.[1] === cdx
               }
+              noteMode={noteMode}
+              notes={notes[`${idx}-${cdx}`]}
             />
           )),
         )}

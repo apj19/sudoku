@@ -1,15 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Eraser } from "lucide-react";
+import { Eraser, PenOff } from "lucide-react";
 import { RotateCcw } from "lucide-react";
 // import { CircleFadingArrowUpIcon } from "lucide-react";
 import { Pen } from "lucide-react";
 // import { PenOff } from "lucide-react";
 import { Lightbulb } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 // export function ButtonIcon() {
 //   return (
 //     <Button variant="outline" size="icon">
@@ -37,6 +33,7 @@ export default function Controls() {
 
   //   solve();
   // }
+  const noteMode = useGameStore((state) => state.noteMode);
 
   function handleRestBoard() {
     // console.log("rest clicked");
@@ -51,6 +48,11 @@ export default function Controls() {
     const undoAction = useGameStore.getState().undoAction;
 
     undoAction();
+  }
+
+  function toggleNoteMode() {
+    const toggleNoteMode = useGameStore.getState().toogleNoteMode;
+    toggleNoteMode();
   }
 
   function handleEraseCell() {
@@ -87,6 +89,7 @@ export default function Controls() {
       <div className="flex items-center justify-between  min-h-12     w-full">
         {/* //Reset game board */}
         <Button
+          disabled={noteMode}
           onClick={handleUndoAction}
           variant="outline"
           size="icon"
@@ -122,13 +125,26 @@ export default function Controls() {
         </Button>
 
         {/* //Notes Mode*/}
+
         <Button
+          onClick={toggleNoteMode}
+          variant="outline"
+          size="icon"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+        >
+          {noteMode ? <PenOff /> : <Pen />}
+        </Button>
+
+        {/* {noteMode ?  <Button  
           variant="outline"
           size="icon"
           className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
         >
           <Pen />
-        </Button>
+
+        </Button>:<Button variant="outline" size="lg">
+          <PenOff />
+        </Button>} */}
 
         {/* <Tooltip>
           <TooltipTrigger
@@ -152,6 +168,7 @@ export default function Controls() {
 
         {/* //Hint random*/}
         <Button
+          disabled={noteMode}
           variant="outline"
           size="icon"
           className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"

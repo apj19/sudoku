@@ -9,6 +9,8 @@ interface CellProps {
   connectedCell: boolean;
   isDefaultValue: boolean;
   isWrongCellValue: boolean;
+  notes: number[];
+  noteMode: boolean;
 }
 
 import { memo } from "react";
@@ -23,6 +25,8 @@ function GameCell({
   connectedCell,
   isDefaultValue,
   isWrongCellValue,
+  notes,
+  noteMode,
 }: CellProps) {
   // const solvingStyle = {
   //   TRY: "bg-yellow-200",
@@ -81,6 +85,8 @@ function GameCell({
         xCoordinate={xCoordinate}
         yCoordinate={yCoordinate}
         bgColor={generateBackgrodCssFromProps()}
+        noteMode={noteMode}
+        notes={notes}
       ></BaseCell>
       {/* <div
         onClick={handleCellClick}

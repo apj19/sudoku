@@ -92,6 +92,14 @@ interface TimerSlice {
   timerState: () => void;
 }
 
+interface NoteOnCellSlice {
+  notes: Record<string, number[]>;
+  noteMode: boolean;
+  toogleNoteMode: () => void;
+  addNote: (x: number, y: number, value: number) => void;
+  deleteNote: (x: number, y: number, value: number) => void;
+}
+
 ///Setting only Action Slices
 
 interface EraseActionSlice {
@@ -108,7 +116,8 @@ type gameStore = GameBoardSlice &
   mistakeSlice &
   undoSlice &
   EraseActionSlice &
-  TimerSlice;
+  TimerSlice &
+  NoteOnCellSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -122,26 +131,34 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   setGameBoard: (newBoard: number[][]) => set(() => ({ gameBoard: newBoard })),
 
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => {
-    const { gameBoard, updateHighliteSameCell, solution } = get();
-    const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
-    if (updatedBoard[x][y] == value) {
-      updatedBoard[x][y] = 0;
-      updateHighliteSameCell(0);
-    } else {
-      updatedBoard[x][y] = value;
-      updateHighliteSameCell(value);
-    }
+    const { gameBoard, updateHighliteSameCell, solution, noteMode, addNote } =
+      get();
 
-    //solution check
-
-    if (solution[x][y] !== value) {
-      set((state) => ({
-        gameBoard: updatedBoard,
-        isWrongCellValue: [x, y] as [number, number],
-        mistakeCount: state.mistakeCount + 1,
-      }));
+    if (noteMode) {
+      //handle note mode
+      addNote(x, y, value);
     } else {
-      set({ gameBoard: updatedBoard, isWrongCellValue: null });
+      //without note mode
+      const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
+      if (updatedBoard[x][y] == value) {
+        updatedBoard[x][y] = 0;
+        updateHighliteSameCell(0);
+      } else {
+        updatedBoard[x][y] = value;
+        updateHighliteSameCell(value);
+      }
+
+      //solution check
+
+      if (solution[x][y] !== value) {
+        set((state) => ({
+          gameBoard: updatedBoard,
+          isWrongCellValue: [x, y] as [number, number],
+          mistakeCount: state.mistakeCount + 1,
+        }));
+      } else {
+        set({ gameBoard: updatedBoard, isWrongCellValue: null });
+      }
     }
   },
 
@@ -165,6 +182,7 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       isSolving: false,
       index: -1,
       undoStack: [],
+      notes: {},
     });
   },
 
@@ -342,6 +360,53 @@ const createTimerSlice: AppSliceCreator<TimerSlice> = (set) => ({
   },
 });
 
+const createNoteOnCellSlice: AppSliceCreator<NoteOnCellSlice> = (set, get) => ({
+  notes: {},
+  noteMode: false,
+
+  toogleNoteMode: () => {
+    set((state) => ({ noteMode: !state.noteMode }));
+  },
+  addNote: (x: number, y: number, value: number) => {
+    const { notes, noteMode } = get();
+
+    if (!noteMode) return;
+
+    let updateNotes = { ...notes };
+    const key = `${x}-${y}`;
+    if (!notes[key]) {
+      updateNotes[key] = [value];
+    } else {
+      let arr = [...updateNotes[key]];
+      let newArr = [];
+      if (arr.includes(value)) {
+        newArr = arr.filter((e) => e != value);
+      } else {
+        arr.push(value);
+        newArr = [...arr];
+      }
+
+      updateNotes[key] = newArr;
+    }
+
+    set({ notes: updateNotes });
+  },
+  deleteNote: (x: number, y: number, value: number) => {
+    const { notes, noteMode } = get();
+    if (!noteMode) return;
+
+    let updateNotes = { ...notes };
+
+    if (!updateNotes[`${x}-${y}`].includes(value)) return;
+
+    updateNotes[`${x}-${y}`] = updateNotes[`${x}-${y}`].filter(
+      (e) => e !== value,
+    );
+
+    set({ notes: updateNotes });
+  },
+});
+
 //below are action slices
 
 const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
@@ -384,6 +449,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createUndoSlice(...a),
   ...createEraseActionSlice(...a),
   ...createTimerSlice(...a),
+  ...createNoteOnCellSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));
