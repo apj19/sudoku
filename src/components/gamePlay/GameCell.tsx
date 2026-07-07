@@ -11,6 +11,7 @@ interface CellProps {
   isWrongCellValue: boolean;
   notes: number[];
   noteMode: boolean;
+  isErrorCell: boolean;
 }
 
 import { memo } from "react";
@@ -27,6 +28,7 @@ function GameCell({
   isWrongCellValue,
   notes,
   noteMode,
+  isErrorCell,
 }: CellProps) {
   // const solvingStyle = {
   //   TRY: "bg-yellow-200",
@@ -52,7 +54,11 @@ function GameCell({
     let res: string = "";
 
     if (currentSelectedCell) {
-      res = res + " " + "bg-blue-200";
+      res = res + " " + "bg-blue-200 animate-jelly ";
+    }
+
+    if (isErrorCell) {
+      res = res + " " + "animate-jelly ";
     }
 
     if (highlitedCells) {

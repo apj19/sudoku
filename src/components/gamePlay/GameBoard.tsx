@@ -35,6 +35,7 @@ export default function GameBoard() {
 
   const noteMode = useGameStore((state) => state.noteMode);
   const notes = useGameStore((state) => state.notes);
+  const errorCordinates = useGameStore((state) => state.errorCordinates);
 
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
@@ -115,6 +116,7 @@ export default function GameBoard() {
               }
               noteMode={noteMode}
               notes={notes[`${idx}-${cdx}`]}
+              isErrorCell={errorCordinates.has(`${idx}-${cdx}`)}
             />
           )),
         )}

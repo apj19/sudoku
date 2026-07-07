@@ -186,3 +186,38 @@ export function countSolution(inputBoard: number[][]): number {
   solve(0, 0);
   return count;
 }
+
+export function checkForSameValueInGrid(
+  board: number[][],
+  r: number,
+  c: number,
+  d: number,
+): number[][] {
+  let corodinateArray: number[][] = [];
+
+  for (let i = 0; i < 9; i++) {
+    if (board[r][i] == d) {
+      corodinateArray.push([r, i]);
+    }
+
+    if (board[i][c] == d) {
+      corodinateArray.push([i, c]);
+    }
+  }
+  /// now in grid
+
+  const startRow = Math.floor(r / 3) * 3;
+  const startCol = Math.floor(c / 3) * 3;
+  for (let i = startRow; i < startRow + 3; i++) {
+    for (let j = startCol; j < startCol + 3; j++) {
+      if (board[i][j] === d) {
+        // Digit already in 3x3 sub-box
+        corodinateArray.push([i, j]);
+      }
+    }
+  }
+
+  // console.log(corodinateArray);
+
+  return corodinateArray;
+}

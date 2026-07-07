@@ -1,4 +1,4 @@
-import solveSudoku from "@/helper/solver";
+import solveSudoku, { checkForSameValueInGrid } from "@/helper/solver";
 import connectedCells, { sameCells } from "@/helper/validationCheck";
 import { create, type StateCreator } from "zustand";
 
@@ -97,7 +97,12 @@ interface NoteOnCellSlice {
   noteMode: boolean;
   toogleNoteMode: () => void;
   addNote: (x: number, y: number, value: number) => void;
-  deleteNote: (x: number, y: number, value: number) => void;
+  deleteNote: (x: number, y: number) => void;
+}
+
+interface ErroAnimationSlice {
+  errorCordinates: Set<string>;
+  setErrorCordinates: (newErrorCordinates: Set<string>) => void;
 }
 
 ///Setting only Action Slices
@@ -117,7 +122,8 @@ type gameStore = GameBoardSlice &
   undoSlice &
   EraseActionSlice &
   TimerSlice &
-  NoteOnCellSlice;
+  NoteOnCellSlice &
+  ErroAnimationSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -131,8 +137,14 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   setGameBoard: (newBoard: number[][]) => set(() => ({ gameBoard: newBoard })),
 
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => {
-    const { gameBoard, updateHighliteSameCell, solution, noteMode, addNote } =
-      get();
+    const {
+      gameBoard,
+      updateHighliteSameCell,
+      solution,
+      noteMode,
+      addNote,
+      deleteNote,
+    } = get();
 
     if (noteMode) {
       //handle note mode
@@ -159,6 +171,8 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       } else {
         set({ gameBoard: updatedBoard, isWrongCellValue: null });
       }
+
+      deleteNote(x, y);
     }
   },
 
@@ -340,7 +354,7 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
 
 const createMistakeSlice: AppSliceCreator<mistakeSlice> = (set) => ({
   mistakeCount: 0,
-  maxMistakeCount: 3,
+  maxMistakeCount: 30,
   updateMistakeCount: () => {
     set((state) => ({ mistakeCount: state.mistakeCount + 1 }));
   },
@@ -368,12 +382,29 @@ const createNoteOnCellSlice: AppSliceCreator<NoteOnCellSlice> = (set, get) => ({
     set((state) => ({ noteMode: !state.noteMode }));
   },
   addNote: (x: number, y: number, value: number) => {
-    const { notes, noteMode } = get();
+    const { notes, noteMode, gameBoard, setErrorCordinates } = get();
 
     if (!noteMode) return;
 
     let updateNotes = { ...notes };
     const key = `${x}-${y}`;
+    ///////////////////////////////////////////////
+    let checkForValidaity = checkForSameValueInGrid(gameBoard, x, y, value);
+
+    if (checkForValidaity.length > 0) {
+      //add all the same value cordinates to the error cordinates
+      let newErrorCordinates = new Set<string>();
+      for (let [x, y] of checkForValidaity) {
+        let key = `${x}-${y}`;
+        newErrorCordinates.add(key);
+      }
+
+      setErrorCordinates(newErrorCordinates);
+
+      return;
+    }
+
+    ///////////////////////////////////
     if (!notes[key]) {
       updateNotes[key] = [value];
     } else {
@@ -391,19 +422,27 @@ const createNoteOnCellSlice: AppSliceCreator<NoteOnCellSlice> = (set, get) => ({
 
     set({ notes: updateNotes });
   },
-  deleteNote: (x: number, y: number, value: number) => {
-    const { notes, noteMode } = get();
-    if (!noteMode) return;
+  deleteNote: (x: number, y: number) => {
+    const { notes } = get();
+    const key = `${x}-${y}`;
+
+    if (!notes[key]) return;
 
     let updateNotes = { ...notes };
 
-    if (!updateNotes[`${x}-${y}`].includes(value)) return;
-
-    updateNotes[`${x}-${y}`] = updateNotes[`${x}-${y}`].filter(
-      (e) => e !== value,
-    );
+    delete updateNotes[key];
 
     set({ notes: updateNotes });
+  },
+});
+
+const createErroAnimationSlice: AppSliceCreator<ErroAnimationSlice> = (
+  set,
+  get,
+) => ({
+  errorCordinates: new Set(),
+  setErrorCordinates: (newErrorCordinates: Set<string>) => {
+    set({ errorCordinates: newErrorCordinates });
   },
 });
 
@@ -414,7 +453,8 @@ const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
   get,
 ) => ({
   EraseAction: () => {
-    const { selectedCell, initialBoard, gameBoard, setGameBoard } = get();
+    const { selectedCell, initialBoard, gameBoard, setGameBoard, deleteNote } =
+      get();
 
     if (!selectedCell) return;
 
@@ -422,6 +462,7 @@ const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
 
     if (initialBoard[x][y] != 0) return; //default value so return
 
+    deleteNote(x, y);
     if (gameBoard[x][y] == 0) return; //cell is empty
 
     const newGameBoard = gameBoard.map((e) => [...e]);
@@ -450,6 +491,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createEraseActionSlice(...a),
   ...createTimerSlice(...a),
   ...createNoteOnCellSlice(...a),
+  ...createErroAnimationSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));
