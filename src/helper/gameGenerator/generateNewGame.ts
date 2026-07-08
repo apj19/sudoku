@@ -3,12 +3,11 @@
 //   difficulty: "easy" | "medium" | "hard";
 // }
 
-
 import { countSolution } from "../solver";
 import { getRandomIndexIncludingEnd } from "./shuffleSeed";
 
 export function getDifficultyTarget(
-  gameDifficulty: "easy" | "medium" | "hard",
+  gameDifficulty: "Beginner" | "easy" | "medium" | "hard",
 ) {
   // e--40-45
   //m-46-51
@@ -20,6 +19,8 @@ export function getDifficultyTarget(
     return Math.floor(Math.random() * (51 - 46 + 1)) + 46;
   } else if (gameDifficulty == "hard") {
     return Math.floor(Math.random() * (57 - 52 + 1)) + 52;
+  } else if (gameDifficulty == "Beginner") {
+    return Math.floor(Math.random() * (27 - 20 + 1)) + 20;
   } else {
     return 46;
   }
@@ -61,8 +62,10 @@ function getMirrorCoordinate(row: number, col: number): [number, number] {
   return [8 - row, 8 - col];
 }
 
-export function generateNewGame(shuffledBoard: number[][],difficulty: "easy" | "medium" | "hard") {
-
+export function generateNewGame(
+  shuffledBoard: number[][],
+  difficulty: "Beginner" | "easy" | "medium" | "hard",
+) {
   const board = shuffledBoard.map((e) => [...e]);
 
   const tartCellRemoval = getDifficultyTarget(difficulty);

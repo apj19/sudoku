@@ -10,7 +10,6 @@ interface CellProps {
   isDefaultValue: boolean;
   isWrongCellValue: boolean;
   notes: number[];
-  noteMode: boolean;
   isErrorCell: boolean;
 }
 
@@ -27,7 +26,6 @@ function GameCell({
   isDefaultValue,
   isWrongCellValue,
   notes,
-  noteMode,
   isErrorCell,
 }: CellProps) {
   // const solvingStyle = {
@@ -54,11 +52,11 @@ function GameCell({
     let res: string = "";
 
     if (currentSelectedCell) {
-      res = res + " " + "bg-blue-200 animate-jelly ";
+      res = res + " " + "bg-blue-200";
     }
 
     if (isErrorCell) {
-      res = res + " " + "animate-jelly ";
+      res = res + " " + " animate-border-flash ";
     }
 
     if (highlitedCells) {
@@ -91,7 +89,6 @@ function GameCell({
         xCoordinate={xCoordinate}
         yCoordinate={yCoordinate}
         bgColor={generateBackgrodCssFromProps()}
-        noteMode={noteMode}
         notes={notes}
       ></BaseCell>
       {/* <div

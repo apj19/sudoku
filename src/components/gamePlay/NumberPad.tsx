@@ -30,7 +30,7 @@ export default function NumberPad() {
           key={e}
           onClick={() => handleNumPadClick(e)}
           variant="outline"
-          className=" md:h-full md:w-full md:text-3xl"
+          className="h-10 md:h-full md:w-full md:text-3xl"
         >
           {e}
         </Button>

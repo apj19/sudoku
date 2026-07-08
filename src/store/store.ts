@@ -60,8 +60,10 @@ interface mistakeSlice {
 }
 
 interface gameDifficultySlice {
-  difficulty: "easy" | "medium" | "hard";
-  setDifficulty: (getDifficulty: "easy" | "medium" | "hard") => void;
+  difficulty: "Beginner" | "easy" | "medium" | "hard";
+  setDifficulty: (
+    getDifficulty: "Beginner" | "easy" | "medium" | "hard",
+  ) => void;
   gameId: number; //this for when game changes it should trigger re render
   incrementGameId: () => void;
 }
@@ -105,6 +107,12 @@ interface ErroAnimationSlice {
   setErrorCordinates: (newErrorCordinates: Set<string>) => void;
 }
 
+interface HintSlice {
+  hintCount: number;
+  maxHintCount: number;
+  hintAction: () => void;
+}
+
 ///Setting only Action Slices
 
 interface EraseActionSlice {
@@ -123,7 +131,8 @@ type gameStore = GameBoardSlice &
   EraseActionSlice &
   TimerSlice &
   NoteOnCellSlice &
-  ErroAnimationSlice;
+  ErroAnimationSlice &
+  HintSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
@@ -280,7 +289,7 @@ const createSelectCellSlice: AppSliceCreator<SelectCellSlice> = (set) => ({
 });
 
 const gameDifficultySlice: AppSliceCreator<gameDifficultySlice> = (set) => ({
-  difficulty: "easy",
+  difficulty: "Beginner",
   setDifficulty: (getDifficulty) => {
     set(() => ({ difficulty: getDifficulty }));
   },
@@ -446,6 +455,38 @@ const createErroAnimationSlice: AppSliceCreator<ErroAnimationSlice> = (
   },
 });
 
+const createHintSlice: AppSliceCreator<HintSlice> = (set, get) => ({
+  hintCount: 0,
+  maxHintCount: 3,
+  hintAction: () => {
+    const {
+      selectedCell,
+      hintCount,
+      initialBoard,
+      gameBoard,
+      solution,
+      setGameBoard,
+    } = get();
+
+    if (hintCount > 2) return;
+
+    if (!selectedCell) return;
+
+    const [x, y] = selectedCell;
+
+    if (initialBoard[x][y] != 0) return;
+
+    if (gameBoard[x][y] == solution[x][y]) {
+      return;
+    } else {
+      gameBoard[x][y] = solution[x][y];
+      const updatedBoard = gameBoard.map((e) => [...e]);
+      // setGameBoard(updatedBoard);
+      set({ hintCount: hintCount + 1, gameBoard: updatedBoard });
+    }
+  },
+});
+
 //below are action slices
 
 const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
@@ -477,6 +518,8 @@ const createEraseActionSlice: AppSliceCreator<EraseActionSlice> = (
   },
 });
 
+//hint action
+
 //here we combine slice
 export const useGameStore = create<gameStore>()((...a) => ({
   ...createGameBoardSlice(...a),
@@ -492,6 +535,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createTimerSlice(...a),
   ...createNoteOnCellSlice(...a),
   ...createErroAnimationSlice(...a),
+  ...createHintSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));

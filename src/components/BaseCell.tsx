@@ -7,7 +7,6 @@ interface BaseCellProps {
   bgColor?: string;
   onClick?: () => void;
   notes?: number[];
-  noteMode?: boolean;
 }
 
 function BaseCell({
@@ -17,8 +16,8 @@ function BaseCell({
   bgColor,
   onClick,
   notes,
-  noteMode,
 }: BaseCellProps) {
+  console.log(xCoordinate, yCoordinate);
   return (
     <div
       onClick={onClick}

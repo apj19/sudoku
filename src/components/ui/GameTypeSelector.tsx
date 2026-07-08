@@ -11,16 +11,16 @@ import { useGameStore } from "@/store/store";
 
 export default function GameTypeSelector() {
   const setGameDifficulty = useGameStore((state) => state.setDifficulty);
-  const setGameId=useGameStore((state)=>state.incrementGameId);
+  const setGameId = useGameStore((state) => state.incrementGameId);
 
-  function handleClick(e:React.MouseEvent<HTMLDivElement>) {
+  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     // setGameDifficulty("easy");
     // console.log(e.currentTarget.dataset.value);
-    setGameDifficulty(e.currentTarget.dataset.value  as "easy" | "medium" | "hard");
+    setGameDifficulty(
+      e.currentTarget.dataset.value as "Beginner" | "easy" | "medium" | "hard",
+    );
     setGameId();
   }
-
-  
 
   return (
     <>
@@ -35,10 +35,19 @@ export default function GameTypeSelector() {
         <DropdownMenuContent>
           <DropdownMenuGroup>
             <DropdownMenuLabel>Game Types</DropdownMenuLabel>
+            <DropdownMenuItem
+              data-value="Beginner"
+              onClick={(e) => handleClick(e)}
+            >
+              Beginner
+            </DropdownMenuItem>
             <DropdownMenuItem data-value="easy" onClick={(e) => handleClick(e)}>
               Easy
             </DropdownMenuItem>
-            <DropdownMenuItem data-value="medium" onClick={(e) => handleClick(e)}>
+            <DropdownMenuItem
+              data-value="medium"
+              onClick={(e) => handleClick(e)}
+            >
               Medium
             </DropdownMenuItem>
             <DropdownMenuItem data-value="hard" onClick={(e) => handleClick(e)}>

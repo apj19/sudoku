@@ -6,14 +6,14 @@ import { Pen } from "lucide-react";
 // import { PenOff } from "lucide-react";
 import { Lightbulb } from "lucide-react";
 
-// export function ButtonIcon() {
-//   return (
-//     <Button variant="outline" size="icon">
-//       <CircleFadingArrowUpIcon />
-//     </Button>
-//   );
-// }
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useGameStore } from "@/store/store";
 
 export default function Controls() {
@@ -34,6 +34,8 @@ export default function Controls() {
   //   solve();
   // }
   const noteMode = useGameStore((state) => state.noteMode);
+  const maxHint = useGameStore((state) => state.maxHintCount);
+  const currenthintCount = useGameStore((state) => state.hintCount);
 
   function handleRestBoard() {
     // console.log("rest clicked");
@@ -53,6 +55,11 @@ export default function Controls() {
   function toggleNoteMode() {
     const toggleNoteMode = useGameStore.getState().toogleNoteMode;
     toggleNoteMode();
+  }
+
+  function handleHintAction() {
+    const hintAction = useGameStore.getState().hintAction;
+    hintAction();
   }
 
   function handleEraseCell() {
@@ -130,9 +137,12 @@ export default function Controls() {
           onClick={toggleNoteMode}
           variant="outline"
           size="icon"
-          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
+          className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5] relative"
         >
           {noteMode ? <PenOff /> : <Pen />}
+          <span className="absolute -right-2 -top-2 bg-[#7091D5] h-6 w-6 text-sm rounded-full text-center text-foreground font-semibold">
+            {noteMode ? "On" : "Off"}
+          </span>
         </Button>
 
         {/* {noteMode ?  <Button  
@@ -167,14 +177,53 @@ export default function Controls() {
         </Button> */}
 
         {/* //Hint random*/}
-        <Button
+        {/* <Button
           disabled={noteMode}
           variant="outline"
           size="icon"
           className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5]"
         >
           <Lightbulb />
-        </Button>
+        </Button> */}
+
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                disabled={noteMode}
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 md:h-14 md:w-14 text-[#7091D5] relative"
+              >
+                {/* <p className="absolute right-1 top-1 bg-blue-300 h-6 w-6 text-xs rounded-full text-center text-white font-semibold">
+                  {maxHint}
+                </p> */}
+                <Lightbulb />
+                <span className="absolute -right-2 -top-2 bg-[#7091D5] h-6 w-6 text-sm rounded-full text-center text-foreground font-semibold">
+                  {maxHint - currenthintCount}
+                </span>
+              </Button>
+            }
+          />
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                Hint-Fill Current Selected Cell
+              </DropdownMenuLabel>
+              <DropdownMenuItem>
+                <Button
+                  onClick={handleHintAction}
+                  disabled={noteMode}
+                  variant="outline"
+                  size="icon-sm"
+                  className="w-full cursor-pointer"
+                >
+                  Ok
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* <Tooltip>
           <TooltipTrigger

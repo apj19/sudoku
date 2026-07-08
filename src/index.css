@@ -157,3 +157,21 @@ body {
     @apply font-sans md:mx-20;
   }
 }
+
+@layer utilities {
+  @keyframes border-flash {
+    100% {
+      /* Uses shadcn's default border color */
+      color: #bfdbfe;
+    }
+    0% {
+      /* Uses shadcn's red/destructive color */
+      color: #ef4444;
+      scale: 1.2;
+    }
+  }
+
+  .animate-border-flash {
+    animation: border-flash 500ms ease-in forwards;
+  }
+}

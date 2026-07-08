@@ -114,7 +114,6 @@ export default function GameBoard() {
               isWrongCellValue={
                 wrongCell?.[0] === idx && wrongCell?.[1] === cdx
               }
-              noteMode={noteMode}
               notes={notes[`${idx}-${cdx}`]}
               isErrorCell={errorCordinates.has(`${idx}-${cdx}`)}
             />
