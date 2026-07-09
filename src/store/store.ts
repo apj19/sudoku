@@ -1,4 +1,6 @@
+import isPositionFilled from "@/helper/numberPosition";
 import solveSudoku, { checkForSameValueInGrid } from "@/helper/solver";
+import gameWonCheck from "@/helper/solver/gameWon";
 import connectedCells, { sameCells } from "@/helper/validationCheck";
 import { create, type StateCreator } from "zustand";
 
@@ -8,6 +10,7 @@ interface GameBoardSlice {
   gameBoard: number[][];
   initialBoard: number[][];
   solution: number[][];
+  gameWon: boolean;
   setSolution: (solution: number[][]) => void;
   setGameBoard: (newBoard: number[][]) => void;
   updateGameBoardWithCoordinate: (x: number, y: number, value: number) => void;
@@ -113,6 +116,10 @@ interface HintSlice {
   hintAction: () => void;
 }
 
+interface allPositionedFilledSlice {
+  positionFilled: boolean[];
+}
+
 ///Setting only Action Slices
 
 interface EraseActionSlice {
@@ -132,13 +139,15 @@ type gameStore = GameBoardSlice &
   TimerSlice &
   NoteOnCellSlice &
   ErroAnimationSlice &
-  HintSlice;
+  HintSlice &
+  allPositionedFilledSlice;
 
 type AppSliceCreator<TSlice> = StateCreator<gameStore, [], [], TSlice>;
 
 const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   gameBoard: [],
   initialBoard: [],
+  gameWon: false,
   solution: [],
   setSolution: (solution: number[][]) => set(() => ({ solution: solution })),
   setInitialBoard: (newBoard: number[][]) =>
@@ -153,6 +162,8 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       noteMode,
       addNote,
       deleteNote,
+      positionFilled,
+      timerState,
     } = get();
 
     if (noteMode) {
@@ -161,6 +172,12 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
     } else {
       //without note mode
       const updatedBoard: number[][] = gameBoard.map((e) => [...e]);
+      ///checking if user already filled correct value so this value cant be updated now
+      if (solution[x][y] == updatedBoard[x][y]) {
+        return;
+      }
+
+      ////////
       if (updatedBoard[x][y] == value) {
         updatedBoard[x][y] = 0;
         updateHighliteSameCell(0);
@@ -178,7 +195,20 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
           mistakeCount: state.mistakeCount + 1,
         }));
       } else {
-        set({ gameBoard: updatedBoard, isWrongCellValue: null });
+        //here user update correct value to board
+        const updatedpositionFilled = [...positionFilled];
+        updatedpositionFilled[value] = isPositionFilled(updatedBoard, value);
+        let wonFlag = gameWonCheck(updatedBoard);
+        if (wonFlag) {
+          timerState();
+        }
+        /////////////////////////////////////////////////////////
+        set({
+          gameBoard: updatedBoard,
+          isWrongCellValue: null,
+          positionFilled: updatedpositionFilled,
+          gameWon: wonFlag,
+        });
       }
 
       deleteNote(x, y);
@@ -206,6 +236,7 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       index: -1,
       undoStack: [],
       notes: {},
+      gameWon: false,
     });
   },
 
@@ -363,7 +394,7 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
 
 const createMistakeSlice: AppSliceCreator<mistakeSlice> = (set) => ({
   mistakeCount: 0,
-  maxMistakeCount: 30,
+  maxMistakeCount: 3,
   updateMistakeCount: () => {
     set((state) => ({ mistakeCount: state.mistakeCount + 1 }));
   },
@@ -455,6 +486,12 @@ const createErroAnimationSlice: AppSliceCreator<ErroAnimationSlice> = (
   },
 });
 
+const createAllPositionedFilledSlice: AppSliceCreator<
+  allPositionedFilledSlice
+> = () => ({
+  positionFilled: Array(10).fill(false),
+});
+
 const createHintSlice: AppSliceCreator<HintSlice> = (set, get) => ({
   hintCount: 0,
   maxHintCount: 3,
@@ -536,6 +573,7 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createNoteOnCellSlice(...a),
   ...createErroAnimationSlice(...a),
   ...createHintSlice(...a),
+  ...createAllPositionedFilledSlice(...a),
 }));
 
 // updateHighliteCells(new Set(sameCells(updatedBoard, Number(cellValue))));

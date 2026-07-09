@@ -9,6 +9,8 @@ import { Play } from "lucide-react";
 import { CirclePause } from "lucide-react";
 import BoardShell from "../BoardShell";
 import GameCell from "./GameCell";
+import Confetti from "react-confetti";
+import GameWon from "../GameWon";
 
 export default function GameBoard() {
   const mainBoard = useGameStore((state) => state.gameBoard);
@@ -33,9 +35,11 @@ export default function GameBoard() {
   const startTimer = useGameStore((state) => state.startTimer);
   const changTimerState = useGameStore((state) => state.timerState);
 
-  const noteMode = useGameStore((state) => state.noteMode);
+  // const noteMode = useGameStore((state) => state.noteMode);
   const notes = useGameStore((state) => state.notes);
   const errorCordinates = useGameStore((state) => state.errorCordinates);
+
+  const gamwWoneFlag = useGameStore((state) => state.gameWon);
 
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
@@ -137,14 +141,14 @@ export default function GameBoard() {
           )}
         </div>
       </BoardShell>
-      {/* 
-      <div className=" grid grid-cols-9 grid-rows-9 aspect-square w-full max-w-125 border-2 border-foreground/50 relative  ">
-        
 
+      {/* <Confetti
+        className="w-full h-full z-1000"
+        numberOfPieces={200} // Adjust density (default is 200)
+        recycle={true} // Set to true to run INFINITELY (default is true)
+      /> */}
 
-
-
-      </div> */}
+      {gamwWoneFlag ? <GameWon /> : <></>}
     </>
   );
 }

@@ -20,7 +20,7 @@ export function getDifficultyTarget(
   } else if (gameDifficulty == "hard") {
     return Math.floor(Math.random() * (57 - 52 + 1)) + 52;
   } else if (gameDifficulty == "Beginner") {
-    return Math.floor(Math.random() * (27 - 20 + 1)) + 20;
+    return Math.floor(Math.random() * (27 - 5 + 1)) + 20;
   } else {
     return 46;
   }

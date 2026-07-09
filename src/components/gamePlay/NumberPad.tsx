@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useGameStore } from "@/store/store";
+import { Check } from "lucide-react";
 
 export default function NumberPad() {
   const updateGameBoardWithCoordinate = useGameStore(
@@ -8,6 +9,7 @@ export default function NumberPad() {
   const currentSelectedCell = useGameStore((state) => state.selectedCell);
   const initialGameValue = useGameStore((state) => state.initialBoard);
   const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);
+  const isThisNumberFilled = useGameStore((state) => state.positionFilled);
 
   function handleNumPadClick(num: number) {
     if (!currentSelectedCell) return;
@@ -32,7 +34,7 @@ export default function NumberPad() {
           variant="outline"
           className="h-10 md:h-full md:w-full md:text-3xl"
         >
-          {e}
+          {isThisNumberFilled[e] ? <Check /> : e}
         </Button>
       ))}
     </div>

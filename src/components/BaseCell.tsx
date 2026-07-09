@@ -17,7 +17,7 @@ function BaseCell({
   onClick,
   notes,
 }: BaseCellProps) {
-  console.log(xCoordinate, yCoordinate);
+  // console.log(xCoordinate, yCoordinate);
   return (
     <div
       onClick={onClick}
