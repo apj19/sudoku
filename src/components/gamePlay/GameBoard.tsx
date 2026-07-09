@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useGameStore } from "@/store/store";
 import { generateNewGame } from "@/helper/gameGenerator/generateNewGame";
 import SEED from "@/helper/seed";
@@ -31,6 +31,8 @@ export default function GameBoard() {
   const startNewGame = useGameStore((state) => state.startNewGame);
   const gameID = useGameStore((state) => state.gameId);
 
+  const prevGameIDRef = useRef(gameID);
+
   const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);
   const startTimer = useGameStore((state) => state.startTimer);
   const changTimerState = useGameStore((state) => state.timerState);
@@ -45,17 +47,38 @@ export default function GameBoard() {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
     // console.group("difficulty changes");
+    // console.group(gameID);
+    const hasGameIDChanged = gameID !== prevGameIDRef.current;
+    prevGameIDRef.current = gameID; // update ref for next time
+
+    // if (mainBoard.length != 0) {
+    //   return;
+    // }
+
+    if (hasGameIDChanged || mainBoard.length === 0) {
+      const shuffledBoard = generateShuffledBoard(SEED);
+
+      const newGame = generateNewGame(shuffledBoard, gameDifficulty);
+
+      //replace with main game logic
+      setGameSolution(shuffledBoard);
+      setNewGameBoardInitialValue(newGame); //
+      startNewGame(newGame);
+      resetMistake();
+    }
+    // } else if (mainBoard.length === 0) {
+    //   const shuffledBoard = generateShuffledBoard(SEED);
+
+    //   const newGame = generateNewGame(shuffledBoard, gameDifficulty);
+
+    //   //replace with main game logic
+    //   setGameSolution(shuffledBoard);
+    //   setNewGameBoardInitialValue(newGame); //
+    //   startNewGame(newGame);
+    //   resetMistake();
+    // }
 
     //moving here back from solver
-    const shuffledBoard = generateShuffledBoard(SEED);
-
-    const newGame = generateNewGame(shuffledBoard, gameDifficulty);
-
-    //replace with main game logic
-    setGameSolution(shuffledBoard);
-    setNewGameBoardInitialValue(newGame); //
-    startNewGame(newGame);
-    resetMistake();
   }, [gameDifficulty, gameID]);
 
   //this use effect handles windows keyboard events

@@ -8,9 +8,11 @@ export default function GameState() {
     <div className=" flex items-center justify-between  min-h-10 md:min-h-12 text-base  ">
       <div className="flex flex-col items-center">
         <p>Mistakes</p>
-        <p>
-          {mistakeCount}/{maxMistakeCount}
-        </p>
+        <div>
+          {/* <p></p>/{maxMistakeCount} */}
+          <span className="text-red-500">{mistakeCount}</span> /{" "}
+          <span>{maxMistakeCount} </span>
+        </div>
       </div>
 
       <div>
