@@ -21,7 +21,7 @@ export default function SolverSelector() {
   ];
   return (
     <>
-      <section className="w-full  border border-red-500  flex justify-center items-center py-3">
+      <section className="w-full  flex justify-center items-center py-3">
         <div>
           <div className="w-full max-w-xs space-y-2">
             <Label htmlFor={id}>Select Sudoku Solving Algorithim</Label>

@@ -9,7 +9,7 @@ import { Play } from "lucide-react";
 import { CirclePause } from "lucide-react";
 import BoardShell from "../BoardShell";
 import GameCell from "./GameCell";
-import Confetti from "react-confetti";
+
 import GameWon from "../GameWon";
 
 export default function GameBoard() {

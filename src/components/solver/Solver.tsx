@@ -10,19 +10,20 @@ import SolverBoard from "./SolverBoard";
 import SolverSelector from "./SolverSelector";
 import SolverDisplay from "./SolverDisplay";
 import SolverGame from "./SolverGame";
+import SolverProgress from "./SolverProgress";
 // import { Navigate, useLocation } from "react-router-dom";
 
 export default function Solver() {
-  const mainBoard = useGameStore((state) => state.gameBoard);
-  const navigate = useNavigate();
+  // const mainBoard = useGameStore((state) => state.gameBoard);
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    if (mainBoard.length == 0) {
-      navigate("/");
-    }
+  // useEffect(() => {
+  //   if (mainBoard.length == 0) {
+  //     navigate("/");
+  //   }
 
-    //solve the sudoku
-  }, []);
+  //   //solve the sudoku
+  // }, []);
 
   return (
     <>
@@ -43,24 +44,15 @@ export default function Solver() {
             <SolverDisplay />
           </div>
 
-          <div
-            className=" border border-amber-100 w-full"
-            style={{ gridArea: "gameState1" }}
-          >
-            <p>jhdgjkfxgkjdfh</p>
+          <div className=" w-full" style={{ gridArea: "gameState1" }}>
+            <SolverProgress />
           </div>
 
-          <div
-            className=" border border-amber-100 w-full"
-            style={{ gridArea: "solverControls" }}
-          >
+          <div className="  w-full" style={{ gridArea: "solverControls" }}>
             <SolverControls />
           </div>
 
-          <div
-            className=" border border-amber-100 w-full"
-            style={{ gridArea: "solverGame" }}
-          >
+          <div className=" w-full" style={{ gridArea: "solverGame" }}>
             <SolverGame />
           </div>
         </div>
