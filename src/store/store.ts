@@ -1,5 +1,5 @@
 import isPositionFilled from "@/helper/numberPosition";
-import solveSudoku, { checkForSameValueInGrid } from "@/helper/solver";
+import { checkForSameValueInGrid } from "@/helper/solver";
 import gameWonCheck from "@/helper/solver/gameWon";
 import connectedCells, { sameCells } from "@/helper/validationCheck";
 import { create, type StateCreator } from "zustand";
@@ -34,26 +34,26 @@ interface connectCellSlice {
   connectCell: Set<string>;
   updateConnectCell: (x: number, y: number) => void;
 }
-type log = {
-  event: "TRY" | "PLACE" | "BACKTRACK";
-  coordinate: number[];
-  value: number;
-};
+// type log = {
+//   event: "TRY" | "PLACE" | "BACKTRACK";
+//   coordinate: number[];
+//   value: number;
+// };
 
-interface solverSlice {
-  isSolving: boolean;
-  speed: number;
-  index: number;
-  currentActiveCell: log | null;
-  eventLog: log[];
+// interface solverSlice {
+//   isSolving: boolean;
+//   speed: number;
+//   index: number;
+//   currentActiveCell: log | null;
+//   eventLog: log[];
 
-  setIsSolving: () => void;
-  setSpeed: (newSpeed: number) => void;
-  setIndex: (newIdx: number) => void;
-  setEventLog: () => void;
-  // setCurrentActiveCell: (x: number, y: number) => void;
-  nextEvent: () => void;
-}
+//   setIsSolving: () => void;
+//   setSpeed: (newSpeed: number) => void;
+//   setIndex: (newIdx: number) => void;
+//   setEventLog: () => void;
+//   // setCurrentActiveCell: (x: number, y: number) => void;
+//   nextEvent: () => void;
+// }
 
 interface mistakeSlice {
   mistakeCount: number;
@@ -130,7 +130,6 @@ type gameStore = GameBoardSlice &
   SelectCellSlice &
   HighliteSameCellSlice &
   connectCellSlice &
-  solverSlice &
   gameDifficultySlice &
   isWrongCellValueSlice &
   mistakeSlice &
@@ -216,12 +215,12 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
   },
 
   startNewGame: (newGame: number[][]) => {
-    const { setGameBoard, setEventLog } = get();
+    const { setGameBoard } = get();
 
     // setInitialBoard(newGame); //this will save initial state of board
     //set main game board
     setGameBoard(newGame);
-    setEventLog();
+
     //default select cell state
 
     set({
@@ -231,9 +230,6 @@ const createGameBoardSlice: AppSliceCreator<GameBoardSlice> = (set, get) => ({
       isWrongCellValue: null,
       timeInSec: 0,
       startTimer: true,
-      currentActiveCell: null,
-      isSolving: false,
-      index: -1,
       undoStack: [],
       notes: {},
       gameWon: false,
@@ -347,50 +343,50 @@ const createConnectCellSlice: AppSliceCreator<connectCellSlice> = (set) => ({
     set(() => ({ connectCell: new Set<string>(connectedCells(x, y)) })),
 });
 
-const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
-  isSolving: false,
-  speed: 200,
-  index: -1,
-  currentActiveCell: null,
-  eventLog: [],
-  setIsSolving: () => set((state) => ({ isSolving: !state.isSolving })),
-  setSpeed: (newSpeed: number) => set(() => ({ speed: newSpeed })),
-  setIndex: (newIdx: number) => set(() => ({ index: newIdx })),
+// const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
+//   isSolving: false,
+//   speed: 200,
+//   index: -1,
+//   currentActiveCell: null,
+//   eventLog: [],
+//   setIsSolving: () => set((state) => ({ isSolving: !state.isSolving })),
+//   setSpeed: (newSpeed: number) => set(() => ({ speed: newSpeed })),
+//   setIndex: (newIdx: number) => set(() => ({ index: newIdx })),
 
-  setEventLog: () =>
-    set((state) => ({
-      eventLog: solveSudoku(
-        state.gameBoard.map((e) => [...e]),
-        [],
-      ),
-    })),
-  // setCurrentActiveCell: (x: number, y: number) =>
-  //   set(() => ({ currentActiveCell: [x, y] as [number, number] })),
+//   setEventLog: () =>
+//     set((state) => ({
+//       eventLog: solveSudoku(
+//         state.gameBoard.map((e) => [...e]),
+//         [],
+//       ),
+//     })),
+//   // setCurrentActiveCell: (x: number, y: number) =>
+//   //   set(() => ({ currentActiveCell: [x, y] as [number, number] })),
 
-  nextEvent: () => {
-    const { index, eventLog, gameBoard } = get();
-    const newIndex = index + 1;
+//   nextEvent: () => {
+//     const { index, eventLog, gameBoard } = get();
+//     const newIndex = index + 1;
 
-    if (newIndex >= eventLog.length) {
-      // console.log(eventLog);
-      set({ isSolving: false });
-      return;
-    }
+//     if (newIndex >= eventLog.length) {
+//       // console.log(eventLog);
+//       set({ isSolving: false });
+//       return;
+//     }
 
-    const currentEvent = eventLog[newIndex];
-    const newBoard = gameBoard.map((e) => [...e]);
-    //setting current event value
-    const [currX, currY] = currentEvent.coordinate;
+//     const currentEvent = eventLog[newIndex];
+//     const newBoard = gameBoard.map((e) => [...e]);
+//     //setting current event value
+//     const [currX, currY] = currentEvent.coordinate;
 
-    newBoard[currX][currY] = currentEvent.value;
+//     newBoard[currX][currY] = currentEvent.value;
 
-    set({
-      gameBoard: newBoard,
-      index: newIndex,
-      currentActiveCell: currentEvent,
-    });
-  },
-});
+//     set({
+//       gameBoard: newBoard,
+//       index: newIndex,
+//       currentActiveCell: currentEvent,
+//     });
+//   },
+// });
 
 const createMistakeSlice: AppSliceCreator<mistakeSlice> = (set) => ({
   mistakeCount: 0,
@@ -478,7 +474,6 @@ const createNoteOnCellSlice: AppSliceCreator<NoteOnCellSlice> = (set, get) => ({
 
 const createErroAnimationSlice: AppSliceCreator<ErroAnimationSlice> = (
   set,
-  get,
 ) => ({
   errorCordinates: new Set(),
   setErrorCordinates: (newErrorCordinates: Set<string>) => {
@@ -496,14 +491,8 @@ const createHintSlice: AppSliceCreator<HintSlice> = (set, get) => ({
   hintCount: 0,
   maxHintCount: 3,
   hintAction: () => {
-    const {
-      selectedCell,
-      hintCount,
-      initialBoard,
-      gameBoard,
-      solution,
-      setGameBoard,
-    } = get();
+    const { selectedCell, hintCount, initialBoard, gameBoard, solution } =
+      get();
 
     if (hintCount > 2) return;
 
@@ -563,7 +552,6 @@ export const useGameStore = create<gameStore>()((...a) => ({
   ...createSelectCellSlice(...a),
   ...createHighliteSameCellSlice(...a),
   ...createConnectCellSlice(...a),
-  ...createSolverSlice(...a),
   ...gameDifficultySlice(...a),
   ...createIsWrongCellValueSlice(...a),
   ...createMistakeSlice(...a),

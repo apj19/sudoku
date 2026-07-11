@@ -59,6 +59,7 @@ export default function GameBoard() {
       const shuffledBoard = generateShuffledBoard(SEED);
 
       const newGame = generateNewGame(shuffledBoard, gameDifficulty);
+      // console.log(newGame);
 
       //replace with main game logic
       setGameSolution(shuffledBoard);

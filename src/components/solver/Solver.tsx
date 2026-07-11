@@ -7,6 +7,9 @@ import "./solver.css";
 import { useGameStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 import SolverBoard from "./SolverBoard";
+import SolverSelector from "./SolverSelector";
+import SolverDisplay from "./SolverDisplay";
+import SolverGame from "./SolverGame";
 // import { Navigate, useLocation } from "react-router-dom";
 
 export default function Solver() {
@@ -29,15 +32,36 @@ export default function Solver() {
         </div>
 
         <div className="sidebar-wrapper1">
+          <div className="w-full" style={{ gridArea: "solverSelector" }}>
+            <SolverSelector />
+          </div>
+
           <div
-            className=" border border-amber-100"
+            className=" border border-amber-100 w-full   md:h-[50%]"
+            style={{ gridArea: "solverDisplay" }}
+          >
+            <SolverDisplay />
+          </div>
+
+          <div
+            className=" border border-amber-100 w-full"
+            style={{ gridArea: "gameState1" }}
+          >
+            <p>jhdgjkfxgkjdfh</p>
+          </div>
+
+          <div
+            className=" border border-amber-100 w-full"
             style={{ gridArea: "solverControls" }}
           >
             <SolverControls />
           </div>
 
-          <div style={{ gridArea: "gameState1" }}>
-            <p>jhdgjkfxgkjdfh</p>
+          <div
+            className=" border border-amber-100 w-full"
+            style={{ gridArea: "solverGame" }}
+          >
+            <SolverGame />
           </div>
         </div>
       </section>

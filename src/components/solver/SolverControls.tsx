@@ -1,19 +1,20 @@
-import { useGameStore } from "@/store/store";
 import { Button } from "../ui/button";
-import GameTypeSelector from "../ui/GameTypeSelector";
+
+import { useSolverStore } from "@/store/solverStore";
 
 export default function SolverControls() {
-  const startSolver = useGameStore((state) => state.setIsSolving);
-  const TotalSteps = useGameStore.getState().eventLog.length;
+  const startSolver = useSolverStore((state) => state.setIsSolving);
+
   function handleStartSolver() {
     startSolver();
   }
   return (
     <>
-      <div>
+      <div className="flex justify-between items-center">
+        <Button>Prev</Button>
         <Button onClick={handleStartSolver}>Start</Button>
-        <p>{TotalSteps}</p>
-        <GameTypeSelector />
+        <Button>Next</Button>
+        <Button>Speed</Button>
       </div>
     </>
   );

@@ -2,7 +2,7 @@
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr;
-  grid-template-areas: "solverBoard" "solverControls" "gameState1";
+  grid-template-areas: "solverBoard" "solverSelector" "solverDisplay" "gameState1" "solverControls" "solverGame";
   justify-content: center;
   align-items: center;
 }

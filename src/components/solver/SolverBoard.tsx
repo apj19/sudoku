@@ -1,15 +1,14 @@
-import { useGameStore } from "@/store/store";
-
 import { useEffect } from "react";
 import BoardShell from "../BoardShell";
 import SolverBoardCell from "./SolverBoardCell";
+import { useSolverStore } from "@/store/solverStore";
 
 export default function SolverBoard() {
-  const mainBoard = useGameStore((state) => state.gameBoard);
-  const isSolving = useGameStore((state) => state.isSolving);
-  const SolverSpeed = useGameStore((state) => state.speed);
-  const nextSolvingStep = useGameStore((state) => state.nextEvent);
-  const tryingCell = useGameStore((state) => state.currentActiveCell);
+  const mainBoard = useSolverStore((state) => state.solverBoard);
+  const isSolving = useSolverStore((state) => state.isSolving);
+  const SolverSpeed = useSolverStore((state) => state.speed);
+  const nextSolvingStep = useSolverStore((state) => state.nextEvent);
+  const tryingCell = useSolverStore((state) => state.currentActiveCell);
 
   //   useEffect(()=>{
 
@@ -21,7 +20,7 @@ export default function SolverBoard() {
 
     const interval = setInterval(() => {
       nextSolvingStep();
-    }, 10);
+    }, SolverSpeed);
 
     return () => clearInterval(interval);
   }, [isSolving, SolverSpeed]);
@@ -45,9 +44,6 @@ export default function SolverBoard() {
           )),
         )}
       </BoardShell>
-      {/* <div className=" grid grid-cols-9 grid-rows-9 aspect-square w-full max-w-125 border-2 border-foreground/50 relative  ">
-        
-      </div> */}
     </>
   );
 }
