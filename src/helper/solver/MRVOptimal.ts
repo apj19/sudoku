@@ -96,7 +96,6 @@ export function InitializesQueue(candidateMap: Map<string, Set<number>>) {
 }
 
 function updateNeighbors(
-  board: number[][],
   candidateMap: Map<string, Set<number>>,
   queue: cell[],
   currentCell: cell,
@@ -248,7 +247,6 @@ function propagate(
     //now updated corresponding candidates from cell row, grid
 
     const isUpdateNeighborsSuccess = updateNeighbors(
-      board,
       candidateMap,
       queue,
       cell,
@@ -340,7 +338,7 @@ export function optimalMRV(
     event.push({ event: "TRY", coordinate: [cell.x, cell.y], value: d });
     mapCopy.delete(`${cell.x}-${cell.y}`);
     const nqueue: cell[] = [];
-    const ok = updateNeighbors(boardCopy, mapCopy, nqueue, cell, d);
+    const ok = updateNeighbors(mapCopy, nqueue, cell, d);
     if (!ok) {
       event.push({
         event: "BACKTRACK",

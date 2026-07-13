@@ -1,10 +1,10 @@
-import generateNewGame from "@/helper/gameGenerator/shuffleSeed";
-import { getDifficultyTarget } from "@/helper/gameGenerator/generateNewGame";
-import SEED from "@/helper/seed";
-import { fullBoardValidityCheck } from "@/helper/solver";
-import { expect, test } from "vitest";
+// import generateNewGame from "@/helper/gameGenerator/shuffleSeed";
+// import { getDifficultyTarget } from "@/helper/gameGenerator/generateNewGame";
+// import SEED from "@/helper/seed";
+// import { fullBoardValidityCheck } from "@/helper/solver";
+// import { expect, test } from "vitest";
 
-const seed = SEED;
+// const seed = SEED;
 // Array.from({ length: 10 }).forEach((_, i) => {
 //   test(`board test ${i + 1} is valid or not`, () => {
 //     const board = generateNewGame(seed);

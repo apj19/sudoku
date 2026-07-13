@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import GameTypeSelector from "../ui/GameTypeSelector";
+
 import { useGameStore } from "@/store/store";
 import { useSolverStore } from "@/store/solverStore";
 import GameTypeSelect from "../GameTypeSelect";

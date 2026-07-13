@@ -1,11 +1,8 @@
 // import Timer from "./Timer";
 
-import { useEffect } from "react";
-
 import SolverControls from "./SolverControls";
 import "./solver.css";
-import { useGameStore } from "@/store/store";
-import { useNavigate } from "react-router-dom";
+
 import SolverBoard from "./SolverBoard";
 import SolverSelector from "./SolverSelector";
 import SolverDisplay from "./SolverDisplay";

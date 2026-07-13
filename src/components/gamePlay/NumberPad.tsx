@@ -3,9 +3,9 @@ import { useGameStore } from "@/store/store";
 import { Check } from "lucide-react";
 
 export default function NumberPad() {
-  const updateGameBoardWithCoordinate = useGameStore(
-    (state) => state.updateGameBoardWithCoordinate,
-  );
+  // const updateGameBoardWithCoordinate = useGameStore(
+  //   (state) => state.updateGameBoardWithCoordinate,
+  // );
   const currentSelectedCell = useGameStore((state) => state.selectedCell);
   const initialGameValue = useGameStore((state) => state.initialBoard);
   const updateGameBoardWithLog = useGameStore((state) => state.updateGameBoard);

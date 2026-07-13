@@ -108,7 +108,6 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
     const currentBoard = solverBoard.map((e) => [...e]);
     const MRVBoard = solverBoard.map((e) => [...e]);
 
-    let res: log[] = [];
     let backtrackingLogs: log[] = [];
     let MRVLogs: log[] = [];
 

@@ -37,12 +37,12 @@ export default function Controls() {
   const maxHint = useGameStore((state) => state.maxHintCount);
   const currenthintCount = useGameStore((state) => state.hintCount);
 
-  function handleRestBoard() {
-    // console.log("rest clicked");
-    const initialBoard = useGameStore.getState().initialBoard;
-    const restGame = useGameStore.getState().startNewGame;
-    restGame(initialBoard);
-  }
+  // function handleRestBoard() {
+  //   // console.log("rest clicked");
+  //   const initialBoard = useGameStore.getState().initialBoard;
+  //   const restGame = useGameStore.getState().startNewGame;
+  //   restGame(initialBoard);
+  // }
 
   function handleUndoAction() {
     console.log("undo clicked");
