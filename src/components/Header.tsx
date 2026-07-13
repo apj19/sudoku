@@ -1,5 +1,6 @@
 import { IconBrandGithub } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import { ModeToggle } from "./ModeToggle";
 
 export default function Header() {
   return (
@@ -9,16 +10,20 @@ export default function Header() {
           Sudoku
         </Link>
 
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center  gap-4">
           {/* <ModeToggle /> */}
-          <div className="flex items-center pt-3">
+          <div className="flex items-center gap-4">
             <a
-              href="https://github.com/apj19/gameOfLife2"
+              href="https://github.com/apj19/sudoku"
               target="_blank"
               rel="noopener noreferrer"
             >
               <IconBrandGithub size={26} stroke={1} className="" />
             </a>
+          </div>
+
+          <div className="flex items-center justify-center ">
+            <ModeToggle />
           </div>
         </div>
       </section>

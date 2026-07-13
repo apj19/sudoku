@@ -7,6 +7,7 @@ interface BoardCellProps {
   yCoordinate: number;
   currentTryingCell: boolean;
   currentTryingEvent: "TRY" | "PLACE" | "BACKTRACK";
+  isDefaultValue: boolean;
 }
 
 function SolverBoardCell({
@@ -15,6 +16,7 @@ function SolverBoardCell({
   yCoordinate,
   currentTryingCell,
   currentTryingEvent,
+  isDefaultValue,
 }: BoardCellProps) {
   const solvingStyle = {
     TRY: "bg-yellow-200",
@@ -22,13 +24,27 @@ function SolverBoardCell({
     BACKTRACK: "bg-red-200",
   };
 
+  function generateBackgrodCssFromProps(): string {
+    let res: string = "";
+
+    if (!isDefaultValue) {
+      res = res + " " + "text-[#7091D5] font-bold";
+    }
+
+    if (currentTryingCell) {
+      res = res + " " + solvingStyle[currentTryingEvent];
+    }
+
+    return res;
+  }
+
   return (
     <>
       <BaseCell
         cellValue={cellValue}
         xCoordinate={xCoordinate}
         yCoordinate={yCoordinate}
-        bgColor={currentTryingCell ? solvingStyle[currentTryingEvent] : ""}
+        bgColor={generateBackgrodCssFromProps()}
       ></BaseCell>
       {/* <div
         className={` border border-gray-300 text-center cursor-pointer caret-transparent  

@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSolverStore } from "@/store/solverStore";
 
 export default function SolverSelector() {
   const id = useId();
@@ -17,15 +18,26 @@ export default function SolverSelector() {
   const items = [
     { label: "Solver Algorithim", value: null },
     { label: "Backtracking", value: "Backtracking" },
-    { label: "MRV+Backtracking", value: "MRV+Backtracking" },
+    { label: "MRV", value: "MRV" },
   ];
+
+  // "Backtracking" | "MRV"
+  function handleSolver(value: "Backtracking" | "MRV") {
+    const setSolverAlgorithim = useSolverStore.getState().setAlgorithm;
+    setSolverAlgorithim(value);
+  }
+
   return (
     <>
-      <section className="w-full  flex justify-center items-center py-3">
+      <section className="w-full  flex justify-center items-center">
         <div>
           <div className="w-full max-w-xs space-y-2">
             <Label htmlFor={id}>Select Sudoku Solving Algorithim</Label>
-            <Select items={items} defaultValue="Backtracking">
+            <Select
+              items={items}
+              defaultValue="Backtracking"
+              onValueChange={(v) => handleSolver(v as "Backtracking" | "MRV")}
+            >
               <SelectTrigger className="w-full border-sky-600 bg-sky-600/10 text-sky-600 shadow-none focus-visible:border-sky-600 focus-visible:ring-sky-600/20 dark:bg-sky-400/10 dark:text-sky-400 dark:hover:bg-sky-400/10 dark:focus-visible:ring-sky-400/40 [&_svg]:text-sky-600! dark:[&_svg]:text-sky-400!">
                 <SelectValue />
               </SelectTrigger>

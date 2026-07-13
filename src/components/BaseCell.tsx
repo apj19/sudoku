@@ -21,10 +21,10 @@ function BaseCell({
   return (
     <div
       onClick={onClick}
-      className={` border border-gray-300 text-center cursor-pointer caret-transparent 
+      className={` border border-foreground/50 text-center cursor-pointer caret-transparent 
                      
-                     ${yCoordinate === 2 || yCoordinate === 5 ? "border-r-2 border-r-foreground/50" : ""}
-                     ${xCoordinate === 2 || xCoordinate === 5 ? "border-b-2 border-b-foreground/50" : ""}
+                     ${yCoordinate === 2 || yCoordinate === 5 ? "border-r-3 border-r-foreground/50" : ""}
+                     ${xCoordinate === 2 || xCoordinate === 5 ? "border-b-3 border-b-foreground/50" : ""}
                      ${bgColor}
                          
                          flex justify-center items-center`}

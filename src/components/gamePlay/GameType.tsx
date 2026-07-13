@@ -22,11 +22,13 @@ export default function GameType() {
     const gameBoard = useGameStore.getState().gameBoard;
     const deepCopy = gameBoard.map((e) => [...e]);
 
-    const SolverBoard = useSolverStore.getState().solverBoard;
+    // const SolverBoard = useSolverStore.getState().solverBoard;
 
-    if (SolverBoard.length == 0) {
-      copyToSolverBoard(deepCopy);
-    }
+    // if (SolverBoard.length == 0) {
+    //   copyToSolverBoard(deepCopy);
+    // }
+
+    copyToSolverBoard(deepCopy);
 
     navigate("/solver");
   }

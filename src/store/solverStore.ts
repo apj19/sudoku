@@ -1,4 +1,5 @@
 import solveSudoku from "@/helper/solver";
+import { sudokuOptimalSolver } from "@/helper/solver/MRVOptimal";
 import { create, type StateCreator } from "zustand";
 
 type log = {
@@ -7,14 +8,25 @@ type log = {
   value: number;
 };
 
+type States = {
+  ValueTried: number[];
+  ValuePLaced: number[];
+  ValueBackTracked: number[];
+};
+
 interface solverSlice {
   solverBoard: number[][];
+  intialBoard: number[][];
   isSolving: boolean;
   speed: number;
   index: number;
   currentActiveCell: log | null;
   eventLog: log[];
+  OptimalEventLog: log[];
   progress: number;
+  States: States;
+  algorithmSelect: "Backtracking" | "MRV";
+  setAlgorithm: (algorithm: "Backtracking" | "MRV") => void;
 
   setSolverBoard: (newBoard: number[][]) => void;
   setIsSolving: () => void;
@@ -43,14 +55,41 @@ type AppSliceCreator<TSlice> = StateCreator<solverStore, [], [], TSlice>;
 const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
   isSolving: false,
   solverBoard: [],
+  intialBoard: [],
   speed: 100,
   index: -1,
   currentActiveCell: null,
   eventLog: [],
+  OptimalEventLog: [],
   progress: 0,
+  States: { ValueTried: [0, 0], ValuePLaced: [0, 0], ValueBackTracked: [0, 0] },
+  algorithmSelect: "Backtracking",
+  setAlgorithm: (algorithm: "Backtracking" | "MRV") => {
+    set(() => ({
+      algorithmSelect: algorithm,
+      index: -1,
+      isSolving: false,
+      speed: 100,
+      currentActiveCell: null,
+      progress: 0,
+      solverBoard: get().intialBoard,
+    }));
+
+    // const { setEventLog } = get();
+
+    // setEventLog();
+  },
   setSolverBoard: (newBoard: number[][]) => {
     const { setEventLog } = get();
-    set(() => ({ solverBoard: newBoard }));
+    set(() => ({
+      solverBoard: newBoard,
+      intialBoard: newBoard,
+      index: -1,
+      isSolving: false,
+      speed: 100,
+      currentActiveCell: null,
+      progress: 0,
+    }));
     setEventLog();
     // setIndex(-1);
     // setSpeed(200);
@@ -64,28 +103,99 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
     }));
   },
 
-  setEventLog: () =>
-    set((state) => ({
-      eventLog: solveSudoku(
-        state.solverBoard.map((e) => [...e]),
-        [],
-      ),
-    })),
+  setEventLog: () => {
+    const { solverBoard } = get();
+    const currentBoard = solverBoard.map((e) => [...e]);
+    const MRVBoard = solverBoard.map((e) => [...e]);
+
+    let res: log[] = [];
+    let backtrackingLogs: log[] = [];
+    let MRVLogs: log[] = [];
+
+    let BacktrackingvalueTried: number = 0;
+    let BacktrackingvaluePLaced: number = 0;
+    let BacktrackingvalueBackTracked: number = 0;
+
+    backtrackingLogs = solveSudoku(currentBoard, []);
+
+    for (let i = 0; i < backtrackingLogs.length; i++) {
+      const event = backtrackingLogs[i];
+      if (event.event === "TRY") {
+        BacktrackingvalueTried++;
+      } else if (event.event === "PLACE") {
+        BacktrackingvaluePLaced++;
+      } else if (event.event === "BACKTRACK") {
+        BacktrackingvalueBackTracked++;
+      }
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
+    let MRVvalueTried: number = 0;
+    let MRVvaluePLaced: number = 0;
+    let MRVvalueBackTracked: number = 0;
+
+    let res1 = sudokuOptimalSolver(MRVBoard, []);
+    MRVLogs = res1.eventLog;
+    // console.log(res1);
+
+    for (let i = 0; i < MRVLogs.length; i++) {
+      const event = MRVLogs[i];
+      if (event.event === "TRY") {
+        MRVvalueTried++;
+      } else if (event.event === "PLACE") {
+        MRVvaluePLaced++;
+      } else if (event.event === "BACKTRACK") {
+        MRVvalueBackTracked++;
+      }
+    }
+
+    // console.log(MRVvaluePLaced);
+
+    set(() =>
+      //     {
+      //   eventLog: solveSudoku(
+      //     state.solverBoard.map((e) => [...e]),
+      //     [],
+      //   ),
+      // }
+
+      ({
+        eventLog: backtrackingLogs,
+        OptimalEventLog: MRVLogs,
+        States: {
+          ValueTried: [BacktrackingvalueTried, MRVvalueTried],
+          ValuePLaced: [BacktrackingvaluePLaced, MRVvaluePLaced],
+          ValueBackTracked: [BacktrackingvalueBackTracked, MRVvalueBackTracked],
+        },
+      }),
+    );
+  },
   // setCurrentActiveCell: (x: number, y: number) =>
   //   set(() => ({ currentActiveCell: [x, y] as [number, number] })),
 
   nextEvent: (delta: number) => {
-    const { index, eventLog, solverBoard } = get();
-    const total = eventLog.length;
+    const { index, eventLog, solverBoard, algorithmSelect, OptimalEventLog } =
+      get();
+
+    let simulationLogs: log[] = [];
+
+    if (algorithmSelect == "Backtracking") {
+      simulationLogs = eventLog;
+    } else {
+      simulationLogs = OptimalEventLog;
+    }
+
+    const total = simulationLogs.length;
     const newIndex = index + delta;
 
-    if (newIndex >= eventLog.length) {
+    if (newIndex >= simulationLogs.length || newIndex < 0) {
       // console.log(eventLog);
       set({ isSolving: false });
       return;
     }
 
-    const currentEvent = eventLog[newIndex];
+    const currentEvent = simulationLogs[newIndex];
     const newBoard = solverBoard.map((e) => [...e]);
     //setting current event value
     const [currX, currY] = currentEvent.coordinate;
@@ -104,13 +214,13 @@ const createSolverSlice: AppSliceCreator<solverSlice> = (set, get) => ({
     const { setSolverBoard } = get();
     setSolverBoard(newBoard);
 
-    set({
-      index: -1,
-      isSolving: false,
-      speed: 100,
-      currentActiveCell: null,
-      progress: 0,
-    });
+    // set({
+    //   index: -1,
+    //   isSolving: false,
+    //   speed: 100,
+    //   currentActiveCell: null,
+    //   progress: 0,
+    // });
   },
 });
 

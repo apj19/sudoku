@@ -70,7 +70,7 @@ export default function GameTypeSelect({
     );
     setGameId();
 
-    console.log(e.currentTarget.dataset.value);
+    // console.log(e.currentTarget.dataset.value);
   }
 
   return (

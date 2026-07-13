@@ -22,6 +22,8 @@ export default function SolverBoard() {
 
   const startNewBoardSolver = useSolverStore((state) => state.startNewGame);
 
+  const initialBoardValue = useSolverStore((state) => state.intialBoard);
+
   useEffect(() => {
     //this use effect start new game and set initial value and solution on game load
     //this is default gae
@@ -68,6 +70,7 @@ export default function SolverBoard() {
                 tryingCell?.coordinate[0] == idx &&
                 tryingCell?.coordinate[1] == cdx
               }
+              isDefaultValue={initialBoardValue[idx][cdx] != 0}
               currentTryingEvent={tryingCell?.event || "TRY"}
             />
           )),

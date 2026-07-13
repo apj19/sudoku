@@ -38,7 +38,7 @@ export default function Solver() {
           </div>
 
           <div
-            className=" border border-amber-100 w-full   md:h-[50%]"
+            className="   w-full   md:h-[48%]"
             style={{ gridArea: "solverDisplay" }}
           >
             <SolverDisplay />
